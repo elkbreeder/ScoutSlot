@@ -18,6 +18,7 @@ public class Game extends JPanel implements KeyListener {
         img = new ImageIcon(newimg);
         drawThread = new DrawThread();
         drawThread.start();
+
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -33,7 +34,14 @@ public class Game extends JPanel implements KeyListener {
     * */
     @Override
     public void keyTyped(KeyEvent e) {
-
+        if(e.getKeyChar() == 'w')
+        {
+            drawThread.start();
+        }
+        if(e.getKeyChar() == 'a')
+        {
+            drawThread.stopRedraw();
+        }
     }
 
     @Override

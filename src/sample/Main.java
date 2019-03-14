@@ -15,6 +15,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         game = new Game();
         JFrame frame = new JFrame("GameFrame");
+        frame.addKeyListener(game);
         frame.setSize(500,500);
         frame.add(game);
         frame.setVisible(true);
