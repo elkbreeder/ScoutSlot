@@ -1,34 +1,45 @@
 package sample;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-
 public class DrawThread extends Thread {
-    boolean stop;
-    long t1;
+    private boolean stop;
+    private boolean pause;
+    private long t1;
     public DrawThread(){
         stop = false;
+        pause = true;
     }
     @Override
     public void run() {
         while(true)
         {
-            if(stop)break;
+            //System.out.println(pause);
+            synchronized (this) {
+                if (stop) {
+                    break;
+                }
+                if (pause) continue;
+            }
+
             Main.game.x = Main.game.x + 1;
             t1 = java.lang.System.currentTimeMillis();
             Main.game.repaint();
             try {
-                Thread.sleep((20-t1)>0?20-t1:0);
+                Thread.sleep((20 - t1) > 0 ? 20 - t1 : 0);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.println("Draw");
-
-
         }
     }
-    public void stopRedraw()
+    public synchronized void continueThread()
+    {
+        pause = false;
+    }
+    public synchronized void holdThread()
+    {
+        pause = true;
+    }
+    public synchronized void stopRedraw()
     {
         stop = true;
     }

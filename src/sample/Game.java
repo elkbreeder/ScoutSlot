@@ -7,6 +7,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 
 public class Game extends JPanel implements KeyListener {
+    public static final int cardcount = 2;
+    public static final int slots = 3;
+    public static final int cardx = 200;
+    public static final int cardy = 300;
+    public static final int positionSlot1x = 50;
+    public static final int positionSlot1y = 50;
     private DrawThread drawThread;
     public ImageIcon img;
     public int x,y = 0;
@@ -36,11 +42,11 @@ public class Game extends JPanel implements KeyListener {
     public void keyTyped(KeyEvent e) {
         if(e.getKeyChar() == 'w')
         {
-            drawThread.start();
+            drawThread.continueThread();
         }
         if(e.getKeyChar() == 'a')
         {
-            drawThread.stopRedraw();
+            drawThread.holdThread();
         }
     }
 

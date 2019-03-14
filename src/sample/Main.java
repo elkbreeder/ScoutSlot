@@ -16,7 +16,7 @@ public class Main {
         game = new Game();
         JFrame frame = new JFrame("GameFrame");
         frame.addKeyListener(game);
-        frame.setSize(500,500);
+        frame.setSize(500,Game.cardcount*Game.cardy);
         frame.add(game);
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {
