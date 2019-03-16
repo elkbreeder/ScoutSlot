@@ -25,9 +25,9 @@ public class Game extends JPanel implements KeyListener {
         cards[1] = new Card("cards200x300/pic2.png");
         cards[1].setY(0);
         cards[2] = new Card("cards200x300/pic3.png");
-        cards[2].setY(-200);
+        cards[2].setY(-20000);
         cards[3] = new Card("cards200x300/pic4.png");
-        cards[3].setY(-200);
+        cards[3].setY(-20000);
         roll1 = new Roll(cards);
         //img = (new Card("pic.jpeg")).getImage();
         gameThread = new GameThread();

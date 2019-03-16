@@ -13,13 +13,15 @@ public class Roll {
     public synchronized void move(int y)
     {
         int height = Game.cardcount* Card.cardy;
-
-        roll[rollPosition].setY( roll[rollPosition].getY()+y);
+        for(Card c:roll)
+        {
+            c.setY(c.getY()+y);
+        }
         if(roll[rollPosition].getY() + Card.cardy > height)//falls aktuelle karte aus dem bildschirm rausschaut
         {
-            int newPosition = roll[rollPosition].getY() - Card.cardy;
             moveRollPosition();
-            roll[rollPosition].setY(newPosition);
+            int newPosition = roll[rollPosition].getY() - Card.cardy;
+            roll[(rollPosition +1)%roll.length].setY(newPosition);
         }
     }
     public synchronized Card getCard(int index)

@@ -9,7 +9,12 @@ public class GameThread extends Thread{
     {
         while(true)
         {
-            if(roll)
+            boolean temp = false;
+            synchronized (this)
+            {
+                temp = roll;
+            }
+            if(temp)
             {
                 for(int i = 0; i < 100; i++)
                 {
