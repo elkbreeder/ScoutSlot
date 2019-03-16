@@ -21,7 +21,7 @@ public class Game extends JPanel implements KeyListener {
     {
         Card[] cards = new Card[4];
         cards[0] = new Card("cards200x300/pic1.png");
-        cards[0].setY(300);
+        cards[0].setY(Card.cardy);
         cards[1] = new Card("cards200x300/pic2.png");
         cards[1].setY(0);
         cards[2] = new Card("cards200x300/pic3.png");
@@ -29,6 +29,15 @@ public class Game extends JPanel implements KeyListener {
         cards[3] = new Card("cards200x300/pic4.png");
         cards[3].setY(-20000);
         roll1 = new Roll(cards);
+        Card[] cards2 = new Card[4];
+        cards2[0] = new Card("cards200x300/pic1.png");
+        cards2[0].setY(Card.cardy);
+        cards2[1] = new Card("cards200x300/pic2.png");
+        cards2[1].setY(0);
+        cards2[2] = new Card("cards200x300/pic3.png");
+        cards2[2].setY(-20000);
+        cards2[3] = new Card("cards200x300/pic4.png");
+        cards2[3].setY(-20000);
         //img = (new Card("pic.jpeg")).getImage();
         gameThread = new GameThread();
         gameThread.start();
@@ -41,8 +50,8 @@ public class Game extends JPanel implements KeyListener {
         Card c;
         for (int i = 0; i < roll1.getCardCount(); i++) {
             c = roll1.getCard(i);
+            if(c.getY()+Card.cardy<0||c.getY()>Main.sizeY)continue;
             c.getImage().paintIcon(this, g, c.getX(), c.getY());
-            System.out.println("Draw "+ i + " at " + c.getX()+ " "+ c.getY() );
         }
     }
     /*

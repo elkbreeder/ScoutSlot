@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Card {
-    public static final int cardx = 200;
-    public static final int cardy = 300;
+    public static final int cardx = 100;
+    public static final int cardy = 150;
     private int x;
     private int y;
     private ImageIcon image;

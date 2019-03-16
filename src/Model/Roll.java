@@ -10,7 +10,7 @@ public class Roll {
         rollPosition = 0;
         this.roll = roll;
     }
-    public synchronized void move(int y)
+    public void move(int y)
     {
         int height = Game.cardcount* Card.cardy;
         for(Card c:roll)
@@ -24,7 +24,7 @@ public class Roll {
             roll[(rollPosition +1)%roll.length].setY(newPosition);
         }
     }
-    public synchronized Card getCard(int index)
+    public Card getCard(int index)
     {
         return roll[index];
     }

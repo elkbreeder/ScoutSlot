@@ -16,11 +16,11 @@ public class GameThread extends Thread{
             }
             if(temp)
             {
-                for(int i = 0; i < 100; i++)
+                for(int i = 0; i < 1000; i++)
                 {
-                    Main.game.roll1.move(10);
+                    Main.game.roll1.move(15);
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(25);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

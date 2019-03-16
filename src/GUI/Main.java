@@ -10,11 +10,13 @@ import java.io.IOException;
 
 public class Main {
     public static Game game;
+    public static final int sizeX = 500;
+    public static final int sizeY = Game.cardcount* Card.cardy;
     public static void main(String[] args) throws IOException {
         game = new Game();
         JFrame frame = new JFrame("GameFrame");
         frame.addKeyListener(game);
-        frame.setSize(500,Game.cardcount* Card.cardy);
+        frame.setSize(sizeX,sizeY);
         frame.add(game);
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {
