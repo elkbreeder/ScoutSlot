@@ -1,13 +1,11 @@
-package sample;
+package GUI;
 
 
-import javax.imageio.ImageIO;
+import Model.Card;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 public class Main {
@@ -16,7 +14,7 @@ public class Main {
         game = new Game();
         JFrame frame = new JFrame("GameFrame");
         frame.addKeyListener(game);
-        frame.setSize(500,Game.cardcount*Game.cardy);
+        frame.setSize(500,Game.cardcount* Card.cardy);
         frame.add(game);
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {

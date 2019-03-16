@@ -1,4 +1,4 @@
-package sample;
+package GUI;
 
 public class DrawThread extends Thread {
     private boolean stop;
@@ -10,6 +10,7 @@ public class DrawThread extends Thread {
     }
     @Override
     public void run() {
+
         while(true)
         {
             //System.out.println(pause);
@@ -17,10 +18,7 @@ public class DrawThread extends Thread {
                 if (stop) {
                     break;
                 }
-                if (pause) continue;
             }
-
-            Main.game.x = Main.game.x + 1;
             t1 = java.lang.System.currentTimeMillis();
             Main.game.repaint();
             try {
@@ -28,16 +26,7 @@ public class DrawThread extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("Draw");
         }
-    }
-    public synchronized void continueThread()
-    {
-        pause = false;
-    }
-    public synchronized void holdThread()
-    {
-        pause = true;
     }
     public synchronized void stopRedraw()
     {
