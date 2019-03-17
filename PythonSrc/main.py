@@ -16,4 +16,5 @@ while 1:
             sys.exit()
     screen.fill((0, 0, 0))  # fill black
     reel.draw()
+    reel.move(3)
     pygame.display.flip()
