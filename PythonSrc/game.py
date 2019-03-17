@@ -4,30 +4,42 @@ import random
 import math
 from PythonSrc.reel import Reel
 
+black = (0, 0, 0)
+white = (255, 255, 255)
+yellow = (255, 203, 4)
+cardSize = (200, 300)
 
 class Game:
     def __init__(self):
         pygame.init()
         pygame.font.init()
+        roll_offset_left = 50
+        roll_offset_right = 50
+        '''InterfacesInit'''
+        self.height_interface_bottom = 100
+        self.height_interface_top = 100
 
-        self.cardSize = (200, 300)
-        self.roll_offset = 0
         self.roll_speed_range = (5, 10)
 
         '''GameStatesInit'''
         self.show_fps = 0
         '''GameInit'''
-        self.frameSize = (self.cardSize[0] * 3, self.cardSize[1] * 2)
+        self.frameSize = (cardSize[0] * 3 + roll_offset_left + roll_offset_right,
+                          cardSize[1] * 2 + self.height_interface_bottom + self.height_interface_top)
         self.screen = pygame.display.set_mode(self.frameSize)
         self.clock = pygame.time.Clock()
         self.font_arial = pygame.font.SysFont("Arial", 30)
 
-        self.reel = [Reel(self.screen, self.cardSize, self.roll_offset),
-                     Reel(self.screen, self.cardSize, self.roll_offset + self.cardSize[0]),
-                     Reel(self.screen, self.cardSize, self.roll_offset + self.cardSize[0] * 2)]
+        self.reel = [Reel(self.screen, cardSize, self.height_interface_top, roll_offset_left),
+                     Reel(self.screen, cardSize, self.height_interface_top, roll_offset_left + cardSize[0]),
+                     Reel(self.screen, cardSize, self.height_interface_top, roll_offset_left + cardSize[0] * 2)]
         self.roll = [0, 0, 0]
         self.roll_speed = [0, 0, 0]
         self.result = [-1, -1, -1]
+        '''Interface Declaration'''
+        self.interface_bottom = pygame.Rect(0, self.frameSize[1] - self.height_interface_bottom,
+                                            self.frameSize[0], self.height_interface_bottom)
+        self.interface_top = pygame.Rect(0, 0, self.frameSize[0], self.height_interface_top)
 
     def game_loop(self):
         while 1:
@@ -54,13 +66,17 @@ class Game:
             self.reel[i].draw()
         pygame.draw.line(self.screen, (255, 255, 255), (0, self.frameSize[1] // 2),
                          (self.frameSize[0], self.frameSize[1] // 2), 5)
+        self.draw_interface()
+        pygame.display.flip()
+        self.clock.tick(60)
+
+    def draw_interface(self):
+        pygame.draw.rect(self.screen, yellow, self.interface_bottom)
+        pygame.draw.rect(self.screen, yellow, self.interface_top)
         if self.show_fps:
             text_fps = self.font_arial.render("Fps: " + str('{0:.0f}'.format(self.clock.get_fps())),
                                               False, (255, 255, 255))
             self.screen.blit(text_fps, (0, 0))
-        pygame.display.flip()
-        self.clock.tick(60)
-
 
     def event_manager(self):
         for event in pygame.event.get():

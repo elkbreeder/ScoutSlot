@@ -2,7 +2,8 @@ import pygame
 
 
 class Reel:
-    def __init__(self, screen, card_size, x):
+    def __init__(self, screen, card_size, interface_top_height, x):
+        self.interface_top_height = interface_top_height
         self.card_size = card_size
         self.reel_position = 0
         self.screen = screen
@@ -38,7 +39,7 @@ class Reel:
         for curr in self.reel:
             curr[1].move_ip((0, y))
         reel_position_rect = (self.reel[self.reel_position])[1]
-        if reel_position_rect.bottomleft[1] > self.card_size[1] * 2:  # if self.reel_position leaves screen
+        if reel_position_rect.bottomleft[1]-self.interface_top_height > self.card_size[1] * 2:  # if self.reel_position leaves screen
 
             self.reel_position = (self.reel_position + 1) % len(self.reel)  # update reel Position
             reel_position_rect = (self.reel[self.reel_position])[1]
