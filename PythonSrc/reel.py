@@ -24,11 +24,9 @@ class Reel:
         reelPositionRect = (self.reel[self.reelPosition])[1]
         if reelPositionRect.bottomleft[1] > reelPositionRect.height * 2:  # if currentreelposition leaves screen
 
-            self.reelPosition = (self.reelPosition + 1) % len(self.reel)#update reel Position
+            self.reelPosition = (self.reelPosition + 1) % len(self.reel)  # update reel Position
             reelPositionRect = (self.reel[self.reelPosition])[1]
-            newPosition = reelPositionRect.topleft[1] - reelPositionRect.height
-            movePositionRect = (self.reel[(self.reelPosition+1) % len(self.reel)])[1]
-            movePositionRect.y = newPosition
-
-
-
+            newPosition = reelPositionRect.topleft[1] - reelPositionRect.height  # determine where the 2nd reel after
+            # the current reel position at the beginning has to be placed to make the reel goes round and round
+            movePositionRect = (self.reel[(self.reelPosition + 1) % len(self.reel)])[1]
+            movePositionRect.y = newPosition  # place the 2nd reel
