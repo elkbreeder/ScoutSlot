@@ -10,7 +10,7 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 yellow = (255, 203, 4)
 blue = (29, 72, 153)
-
+brown = (107,92,72)
 
 class GUI:
     def __init__(self, game):
@@ -41,8 +41,8 @@ class GUI:
         self.show_winner = 0
 
     def draw(self):
-        self.interface_bottom.fill(yellow)
-        self.interface_top.fill(yellow)
+        self.interface_bottom.fill(brown)
+        self.interface_top.fill(brown)
         if self.show_fps:
             text_fps = self.font_arial.render("Fps: " + str('{0:.0f}'.format(self.game.clock.get_fps())),
                                               False, white)
@@ -53,8 +53,8 @@ class GUI:
             text_winner_rect = text_winner.get_rect(
                 center=(self.game.screen.get_width() // 2, self.game.screen.get_height() // 2))
             self.game.screen.blit(text_winner, text_winner_rect)
-        text_coins = self.font_arial.render("Coins " + str(self.showed_coins), True, blue)
-        text_coins_won = self.font_arial.render("Coins won: " + str(self.showed_coins_won), True, blue)
+        text_coins = self.font_arial.render("Coins " + str(self.showed_coins), True, white)
+        text_coins_won = self.font_arial.render("Coins won: " + str(self.showed_coins_won), True, white)
         text_coins_rect = text_coins.get_rect(x=0, y=0)
         text_coins_won_rect = text_coins_won.get_rect(x=0, y=self.interface_bottom.get_height() // 2)
         self.interface_bottom.blit(text_coins, text_coins_rect)
