@@ -18,7 +18,7 @@ class CoinThread(Thread):
         self.start()
 
     def add(self, i):
-        self.game.coin_change(i)
+        self.game.coin_add(i)
 
     def gpioConfig(self):
         GPIO.setmode(GPIO.BOARD)

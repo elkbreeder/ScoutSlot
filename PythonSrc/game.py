@@ -6,16 +6,16 @@ import random
 import os
 
 try:
-    import gui
-    import model
+    import gui, model, picture
 except:
-    from PythonSrc import gui
-    from PythonSrc import model
+    from PythonSrc import gui, camera, model
 
 NO_RESULT = -1
+PHOTOCOUNTER = pygame.USEREVENT +1
 roll_speed_range = (50, 100)
 roll_range = (50, 100)
 fps = 25
+photo_seconds = 5
 
 
 class Game:
@@ -47,7 +47,9 @@ class Game:
         self.coinLock = Lock()
         self.current_extra_rolls = 0
         self.coins = 0
-        self.coins_won = 0
+
+        self.photo_seconds = 0
+        self.camera = camera.Camera()
         if os.name is not 'nt' and os.uname().nodename is 'raspberrypi': #first check if the os is windows(windows doesn't provide uname)
             print('CoinThread started')
             from coins import CoinThread
@@ -77,13 +79,14 @@ class Game:
             self.draw()
             if all((j == self.result[0] and j is not NO_RESULT) for j in
                    self.result):  # if all reels are stopped and show the same
-                self.sound_win.play()  # player won
-                self.interface.show_winner_window()
-                self.coins_won += 10
-                self.interface.showed_coins_won = self.coins_won
-                self.result[:] = map(lambda _: NO_RESULT, self.result)
+                self.win()
             self.clock.tick(fps)
-
+    def win(self):
+        self.sound_win.play()  # player won
+        self.photo_seconds = photo_seconds
+        pygame.time.set_timer(PHOTOCOUNTER, 1000)
+        self.interface.show_winner_window()
+        self.result[:] = map(lambda _: NO_RESULT, self.result)
     def draw(self):
         self.screen.fill((0, 0, 0))  # fill black
         for i in range(0, len(self.reel)):
@@ -106,29 +109,35 @@ class Game:
                 elif event.key == pygame.K_F3:  # Show FPS
                     self.interface.show_fps_clicked()
                 elif event.key == pygame.K_F4:  # Show Winner Window
-                    self.interface.show_winner_window()
+                    self.win()
                 elif event.key == pygame.K_F5:
-                    self.coin_change(10)
+                    self.coin_add(10)
                 elif event.key == pygame.K_ESCAPE:
                     sys.exit()
+            if event.type == PHOTOCOUNTER:
+                if self.photo_seconds == 1:
+                    pygame.time.set_timer(PHOTOCOUNTER, 0)
+                    self.camera.capture_next_winner()
+                self.photo_seconds -= 1
+
+
 
     def start_roll(self):
-        self.interface.hide_winner_window()
-        if all(i == 0 for i in self.roll):  # if no reel runs
+        if all(i == 0 for i in self.roll) and self.photo_seconds == 0:  # if no reel runs
+            self.interface.hide_winner_window()
             self.sound_chatter.play(-1)  # start rolling
             self.current_extra_rolls = 0
             if self.coins == 0:
                 self.sound_no_money.play(maxtime=400)
                 return
-            self.coin_change(-1)
-            self.interface.showed_coins = self.coins
+            self.coin_add(-1)
             self.result[:] = map(lambda _: NO_RESULT, self.result)
             self.roll_speed[:] = map(
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
 
-    def coin_change(self, coins):
+    def coin_add(self, coins):
         self.coinLock.acquire()
         self.coins += coins
         self.interface.showed_coins = self.coins
