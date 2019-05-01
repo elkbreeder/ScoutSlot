@@ -1,6 +1,9 @@
 import sys
+from threading import Lock
+
 import pygame
 import random
+import os
 
 try:
     import gui
@@ -41,9 +44,14 @@ class Game:
         self.result = [NO_RESULT, NO_RESULT, NO_RESULT]
         self.extra_rolls = 50
 
+        self.coinLock = Lock()
         self.current_extra_rolls = 0
         self.coins = 0
         self.coins_won = 0
+
+        if os.uname().nodename == 'raspberrypi':
+            import coins
+            self.coinThread = coins.CoinThread(self)
 
     def game_loop(self):
         while 1:  # endless loop
@@ -86,6 +94,8 @@ class Game:
     def event_manager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                if hasattr(self, 'coinThread'):
+                    self.coinThread.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:  # Start Roll
@@ -95,7 +105,7 @@ class Game:
                 elif event.key == pygame.K_F4:  # Show Winner Window
                     self.interface.show_winner_window()
                 elif event.key == pygame.K_F5:
-                    self.coins_inserted(10)
+                    self.coin_change(10)
                 elif event.key == pygame.K_ESCAPE:
                     sys.exit()
 
@@ -107,7 +117,7 @@ class Game:
             if self.coins == 0:
                 self.sound_no_money.play(maxtime=400)
                 return
-            self.coins = self.coins - 1
+            self.coin_change(-1)
             self.interface.showed_coins = self.coins
             self.result[:] = map(lambda _: NO_RESULT, self.result)
             self.roll_speed[:] = map(
@@ -115,9 +125,13 @@ class Game:
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
 
-    def coins_inserted(self, coins):
+    def coin_change(self, coins):
+        self.coinLock.acquire()
         self.coins += coins
         self.interface.showed_coins = self.coins
+        self.coinLock.release()
+
+
 
 
 g = Game()
