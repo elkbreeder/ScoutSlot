@@ -1,6 +1,9 @@
 import pygame
 
-from PythonSrc import gui
+try:
+    import gui
+except:
+    from PythonSrc import gui
 
 
 class Reel:

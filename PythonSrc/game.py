@@ -2,8 +2,12 @@ import sys
 import pygame
 import random
 
-from PythonSrc import gui
-from PythonSrc import model
+try:
+    import gui
+    import model
+except:
+    from PythonSrc import gui
+    from PythonSrc import model
 
 NO_RESULT = -1
 roll_speed_range = (50, 100)
