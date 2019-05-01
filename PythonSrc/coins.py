@@ -3,15 +3,15 @@ import RPi.GPIO as GPIO
 import time
 
 try:
-    import game
-except:
     from PythonSrc import game
+except:
+    import game
 
 
 class CoinThread(Thread):
     def __init__(self, game):
         super().__init__()
-        self.counterPin = 12
+        self.counterPin = 18
         self.game = game
         self.gpioConfig()
         self.end = False
@@ -29,7 +29,10 @@ class CoinThread(Thread):
             input_state = GPIO.input(self.counterPin)
             if not input_state:
                 self.add(1)
+                time.sleep(0.07)
+            else:
                 time.sleep(0.02)
+
 
     def quit(self):
         self.end = True

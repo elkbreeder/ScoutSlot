@@ -50,8 +50,13 @@ class Game:
         self.coins_won = 0
 
         if os.uname().nodename == 'raspberrypi':
-            import coins
-            self.coinThread = coins.CoinThread(self)
+            print('CointThread started')
+            from coins import CoinThread
+            from trigger import TriggerThread
+            self.triggerThread = TriggerThread(self)
+            self.coinThread = CoinThread(self)
+        else:
+            print(os.uname().nodename+'-'+'raspberrypi')
 
     def game_loop(self):
         while 1:  # endless loop
@@ -96,6 +101,7 @@ class Game:
             if event.type == pygame.QUIT:
                 if hasattr(self, 'coinThread'):
                     self.coinThread.quit()
+                    self.triggerThread.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:  # Start Roll
@@ -132,7 +138,6 @@ class Game:
         self.coinLock.release()
 
 
-
-
-g = Game()
-g.game_loop()  # start game loop
+if __name__ == '__main__':
+    g = Game()
+    g.game_loop()  # start game loop
