@@ -48,15 +48,12 @@ class Game:
         self.current_extra_rolls = 0
         self.coins = 0
         self.coins_won = 0
-
-        if os.uname().nodename == 'raspberrypi':
-            print('CointThread started')
+        if os.name is not 'nt' and os.uname().nodename is 'raspberrypi': #first check if the os is windows(windows doesn't provide uname)
+            print('CoinThread started')
             from coins import CoinThread
             from trigger import TriggerThread
             self.triggerThread = TriggerThread(self)
             self.coinThread = CoinThread(self)
-        else:
-            print(os.uname().nodename+'-'+'raspberrypi')
 
     def game_loop(self):
         while 1:  # endless loop
