@@ -10,41 +10,43 @@ import java.io.IOException;
 public class PicPane extends JComponent {
 
     private File file;
+    private BufferedImage image;
+    private int height;
+    private boolean marked;
 
     public PicPane(File file) throws IOException {
         this.file = file;
-        BufferedImage img = loadImage();
-        setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
-        // Just for debugging
-        setBorder(BorderFactory.createLineBorder(Color.RED));
+        image = ImageIO.read(file);
+        this.height = image.getHeight();
+        setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
     }
 
-    /**
-     * Fucking method not working @TODO Work out how to resize img
-     */
-    private static BufferedImage resize(BufferedImage img, int height) {
-        int width = (int) ((((double) img.getHeight()) / ((double) img.getWidth())) * height);
-        System.out.println(height + " : " + width);
-        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    public PicPane(File file, int height) throws IOException {
+        this.file = file;
+        this.height = height;
+        loadResizedImage();
+        setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
+    }
 
-        Graphics2D g2d = resized.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(img, 0, 0, width, height, null);
-        g2d.dispose();
+    private static BufferedImage resizeImage(BufferedImage originalImage, int dWidth, int dHeight) {
+        int type = originalImage.getType();
+        if (dWidth == 0 || dHeight == 0) {
+            dWidth = 1;
+            dHeight = 1;
+        }
+        BufferedImage resizedImage = new BufferedImage(dWidth, dHeight, type);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, dWidth, dHeight, null);
+        g.dispose();
 
-        return resized;
+        return resizedImage;
     }
 
     @Override
     public void paintComponent(Graphics graphics) {
-        try {
-            BufferedImage img = loadImage();
-            int x = getWidth() / 2 - img.getWidth() / 2;
-            int y = getHeight() / 2 - img.getHeight() / 2;
-            graphics.drawImage(ImageIO.read(file), x, y, this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        int x = getWidth() / 2 - image.getWidth() / 2;
+        int y = getHeight() / 2 - image.getHeight() / 2;
+        graphics.drawImage(image, x, y, this);
     }
 
     /**
@@ -52,10 +54,26 @@ public class PicPane extends JComponent {
      *
      * @return processed image
      */
-    private BufferedImage loadImage() throws IOException {
-        // return resize(ImageIO.read(file), 300);
-        return ImageIO.read(file);
+    private void loadResizedImage() throws IOException {
+        BufferedImage origImg = ImageIO.read(file);
+        int width = (int) (((double) origImg.getWidth() / origImg.getHeight()) * height);
+        image = resizeImage(
+                origImg,
+                width,
+                height
+        );
     }
 
+    public boolean isMarked() {
+        return marked;
+    }
 
+    public void setMarked(boolean marked) {
+        this.marked = marked;
+        if (marked) {
+            setBorder(BorderFactory.createLineBorder(Color.RED, 5));
+        } else {
+            setBorder(BorderFactory.createEmptyBorder());
+        }
+    }
 }
