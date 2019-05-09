@@ -49,11 +49,6 @@ public class PicPane extends JComponent {
         graphics.drawImage(image, x, y, this);
     }
 
-    /**
-     * Load and process the image so it can be used in the gui
-     *
-     * @return processed image
-     */
     private void loadResizedImage() throws IOException {
         BufferedImage origImg = ImageIO.read(file);
         int width = (int) (((double) origImg.getWidth() / origImg.getHeight()) * height);
@@ -62,6 +57,15 @@ public class PicPane extends JComponent {
                 width,
                 height
         );
+    }
+
+    public void resize(int height) throws IOException {
+        this.height = height;
+        loadResizedImage();
+    }
+
+    public File getFile() {
+        return file;
     }
 
     public boolean isMarked() {
