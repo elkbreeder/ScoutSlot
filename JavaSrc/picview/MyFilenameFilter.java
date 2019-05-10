@@ -13,7 +13,7 @@ public class MyFilenameFilter implements FilenameFilter {
 
     public static MyFilenameFilter imageFilter() {
         return new MyFilenameFilter(new String[]{
-                "gif", "png", "bmp", "jpg" // @TODO adjust file extension list for image filter
+                "gif", "png", "bmp", "jpg"
         });
     }
 

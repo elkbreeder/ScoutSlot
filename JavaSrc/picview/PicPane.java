@@ -9,17 +9,10 @@ import java.io.IOException;
 
 public class PicPane extends JComponent {
 
+    private boolean marked;
+    private int height;
     private File file;
     private BufferedImage image;
-    private int height;
-    private boolean marked;
-
-    public PicPane(File file) throws IOException {
-        this.file = file;
-        image = ImageIO.read(file);
-        this.height = image.getHeight();
-        setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
-    }
 
     public PicPane(File file, int height) throws IOException {
         this.file = file;
@@ -28,6 +21,14 @@ public class PicPane extends JComponent {
         setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
     }
 
+    /**
+     * Resizes an image
+     *
+     * @param originalImage image to be resized
+     * @param dWidth        the width to resize the image to
+     * @param dHeight       the height to resize the image to
+     * @return the new resized image
+     */
     private static BufferedImage resizeImage(BufferedImage originalImage, int dWidth, int dHeight) {
         int type = originalImage.getType();
         if (dWidth == 0 || dHeight == 0) {
@@ -49,6 +50,11 @@ public class PicPane extends JComponent {
         graphics.drawImage(image, x, y, this);
     }
 
+    /**
+     * Loads the image and resizes it to match the given height via {@link #resizeImage(BufferedImage, int, int)}
+     *
+     * @throws IOException thrown if {@link ImageIO#read(File)} fails
+     */
     private void loadResizedImage() throws IOException {
         BufferedImage origImg = ImageIO.read(file);
         int width = (int) (((double) origImg.getWidth() / origImg.getHeight()) * height);
@@ -59,6 +65,12 @@ public class PicPane extends JComponent {
         );
     }
 
+    /**
+     * Sets a new height and resizes the image to match it
+     *
+     * @param height height to resize the panel
+     * @throws IOException thrown if {@link ImageIO#read(File)} fails
+     */
     public void resize(int height) throws IOException {
         this.height = height;
         loadResizedImage();

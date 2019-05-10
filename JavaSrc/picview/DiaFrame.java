@@ -1,7 +1,6 @@
 package picview;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -9,11 +8,11 @@ import java.io.IOException;
 
 public class DiaFrame extends JFrame implements WindowListener {
 
-    private static final int SLEEPING_TIME = 5000;
+    private static final int SLEEPING_TIME = 5000; // Time to show each picture
     private File directory;
     private boolean end;
 
-    public DiaFrame(File dir){
+    public DiaFrame(File dir) {
         directory = dir;
 
         // Configure Frame
@@ -26,7 +25,7 @@ public class DiaFrame extends JFrame implements WindowListener {
         new CycleThread();
     }
 
-    private File[] loadFiles(){
+    private File[] loadFiles() {
         return directory.listFiles(
                 MyFilenameFilter.imageFilter());
     }
@@ -68,7 +67,7 @@ public class DiaFrame extends JFrame implements WindowListener {
 
     private class CycleThread extends Thread {
 
-        public CycleThread(){
+        public CycleThread() {
             start();
         }
 
@@ -76,7 +75,7 @@ public class DiaFrame extends JFrame implements WindowListener {
         public void run() {
             super.run();
 
-            while (!end){
+            while (!end) {
                 File[] files = loadFiles();
                 for (int i = 0; i < files.length; i++) {
                     if (end) {
@@ -86,7 +85,7 @@ public class DiaFrame extends JFrame implements WindowListener {
                         PicPane panel = new PicPane(files[i], getHeight());
                         getContentPane().removeAll();
                         getContentPane().add(panel);
-                        ((JPanel)getContentPane()).updateUI();
+                        ((JPanel) getContentPane()).updateUI();
                         Thread.sleep(SLEEPING_TIME);
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
