@@ -6,7 +6,7 @@ import random
 import os
 
 try:
-    import gui, model, picture
+    import gui, model
 except:
     from PythonSrc import gui, camera, model
 
@@ -49,8 +49,8 @@ class Game:
         self.coins = 0
 
         self.photo_seconds = 0
-        self.camera = camera.Camera()
-        if os.name is not 'nt' and os.uname().nodename is 'raspberrypi': #first check if the os is windows(windows doesn't provide uname)
+        # self.camera = camera.Camera()
+        if os.uname().nodename == 'raspberrypi': #first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
             print('CoinThread started')
             from coins import CoinThread
             from trigger import TriggerThread
