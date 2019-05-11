@@ -103,12 +103,12 @@ class Game:
     def event_manager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit()
+                self.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:  # Start Roll
                     self.start_roll()
                 elif event.key == pygame.K_ESCAPE:
-                    exit()
+                    self.exit()
                 elif event.key == pygame.K_F3:  # Show FPS
                     self.interface.show_fps_clicked()
                 elif event.key == pygame.K_F4:  # Show Winner Window
