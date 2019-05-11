@@ -19,16 +19,16 @@ photo_seconds = 3
 #1024x 768
 #300
 class Game:
-    def __init__(self):
+    def __init__(self, isdebug):
         pygame.init()
         pygame.font.init()
         pygame.mixer.init()
-
+        self.isdebug = isdebug
         '''GameInit'''
         frame_size = (gui.card_size[0] * 3 + gui.width_interface_left + gui.width_interface_right,
                       gui.card_size[1] * 2 + gui.height_interface_bottom + gui.height_interface_top)  # init frame
         print(frame_size)
-        if os.uname().nodename == 'raspberrypi':
+        if os.uname().nodename == 'raspberrypi' and not self.isdebug:
             self.screen = pygame.display.set_mode(frame_size, pygame.FULLSCREEN)  # display frame ,pygame.FULLSCREEN
         else:
             self.screen = pygame.display.set_mode(frame_size)  # display frame ,pygame.FULLSCREEN
@@ -153,5 +153,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    g = Game()
+    print()
+    g = Game(sys.argv.__contains__("--debug"))
     g.game_loop()  # start game loop
+
