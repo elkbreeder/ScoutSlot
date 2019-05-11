@@ -35,7 +35,10 @@ class Camera:
             print(e)
 
     def exit(self):
-        self.cam.stop()
+        try:
+            self.cam.stop()
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':
