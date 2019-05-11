@@ -54,7 +54,10 @@ class GUI:
                 center=[self.interface_top.get_width() // 2,
                         (self.interface_top.get_height() // 2) -5 - 0.5*self.font_arial.get_height()])
             self.game.screen.blit(text_winner, text_winner_rect)  # erste zeile
-            text_winner = self.font_arial.render("Wir machen ein Foto in "+ str(self.game.photo_seconds)+" Sekunden", True, white)
+            if(self.game.photo_seconds == 0):
+                text_winner = self.font_arial.render("Foto wurde gemacht und an die Bar geschickt", True, white)
+            else:
+                text_winner = self.font_arial.render("Wir machen ein Foto in "+ str(self.game.photo_seconds)+" Sekunden", True, white)
             text_winner_rect = text_winner.get_rect(
                 center=(self.interface_top.get_width() // 2,
                         (self.interface_top.get_height() // 2)+5 + 0.5*self.font_arial.get_height()))

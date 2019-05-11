@@ -15,7 +15,7 @@ PHOTOCOUNTER = pygame.USEREVENT +1
 roll_speed_range = (50, 100)
 roll_range = (50, 100)
 fps = 25
-photo_seconds = 5
+photo_seconds = 3
 #1024x 768
 #300
 class Game:
@@ -103,18 +103,12 @@ class Game:
     def event_manager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                if hasattr(self, 'coinThread'):
-                    self.coinThread.quit()
-                    self.triggerThread.quit()
-                sys.exit()
+                exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:  # Start Roll
                     self.start_roll()
                 elif event.key == pygame.K_ESCAPE:
-                    if hasattr(self, 'coinThread'):
-                        self.coinThread.quit()
-                        self.triggerThread.quit()
-                    sys.exit()
+                    exit()
                 elif event.key == pygame.K_F3:  # Show FPS
                     self.interface.show_fps_clicked()
                 elif event.key == pygame.K_F4:  # Show Winner Window
@@ -145,7 +139,12 @@ class Game:
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
-
+    def exit(self):
+        if hasattr(self, 'coinThread'):
+            self.coinThread.quit()
+            self.triggerThread.quit()
+            self.camera.exit()
+        sys.exit()
     def coin_add(self, coins):
         self.coinLock.acquire()
         self.coins += coins
