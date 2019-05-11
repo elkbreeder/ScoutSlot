@@ -6,9 +6,9 @@ import random
 import os
 
 try:
-    import gui, model, picture
+    import gui, model, cam
 except:
-    from PythonSrc import gui, camera, model
+    from PythonSrc import gui, cam, model
 
 NO_RESULT = -1
 PHOTOCOUNTER = pygame.USEREVENT +1
