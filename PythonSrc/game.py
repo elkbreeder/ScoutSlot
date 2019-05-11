@@ -28,7 +28,10 @@ class Game:
         frame_size = (gui.card_size[0] * 3 + gui.width_interface_left + gui.width_interface_right,
                       gui.card_size[1] * 2 + gui.height_interface_bottom + gui.height_interface_top)  # init frame
         print(frame_size)
-        self.screen = pygame.display.set_mode(frame_size)  # display frame ,pygame.FULLSCREEN
+        if os.uname().nodename == 'raspberrypi':
+            self.screen = pygame.display.set_mode(frame_size, pygame.FULLSCREEN)  # display frame ,pygame.FULLSCREEN
+        else:
+            self.screen = pygame.display.set_mode(frame_size)  # display frame ,pygame.FULLSCREEN
         self.clock = pygame.time.Clock()
         self.sound_no_money = pygame.mixer.Sound("../sounds/error0.wav")
         self.sound_chatter = pygame.mixer.Sound("../sounds/chattering_teeth.wav")
@@ -50,7 +53,7 @@ class Game:
         self.coins = 0
 
         self.photo_seconds = 0
-        self.camera = cam.Camera()
+        #self.camera = cam.Camera()
         if os.uname().nodename == 'raspberrypi': #first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
             print('CoinThread started')
             from coins import CoinThread
