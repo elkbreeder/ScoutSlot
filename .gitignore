@@ -1,3 +1,5 @@
 .idea\*
-.idea
-.ideatest\pics
+.idea/*
+.idea/
+PythonSrc/images/
+test\pics

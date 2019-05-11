@@ -53,7 +53,7 @@ class Game:
         self.coins = 0
 
         self.photo_seconds = 0
-        #self.camera = cam.Camera()
+        self.camera = cam.Camera()
         if os.uname().nodename == 'raspberrypi': #first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
             print('CoinThread started')
             from coins import CoinThread
@@ -139,7 +139,7 @@ class Game:
             if self.coins == 0:
                 self.sound_no_money.play(maxtime=400)
                 return
-            self.coin_add(-1)
+            self.coin_add(-2)
             self.result[:] = map(lambda _: NO_RESULT, self.result)
             self.roll_speed[:] = map(
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
