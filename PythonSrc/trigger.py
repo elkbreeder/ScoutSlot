@@ -65,7 +65,7 @@ def getShit():
 
 class TriggerThread(Thread):
 
-    BOUND = 65
+    BOUND = 70
 
     def __init__(self, game):
         super().__init__()
