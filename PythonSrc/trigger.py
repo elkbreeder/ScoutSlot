@@ -64,6 +64,9 @@ def getShit():
     return get_x_rotation(beschleunigung_xout_skaliert, beschleunigung_yout_skaliert, beschleunigung_zout_skaliert)
 
 class TriggerThread(Thread):
+
+    BOUND = 70
+
     def __init__(self, game):
         super().__init__()
         self.game = game
@@ -74,9 +77,10 @@ class TriggerThread(Thread):
     def run(self):
         while not self.end:
             xrot = getShit()
-            if xrot < 0 and not self.triggered:
+            if xrot > self.BOUND and not self.triggered:
                 self.game.start_roll()
-            if not xrot < 0:
+                self.triggered = True
+            if not xrot < self.BOUND and self.triggered:
                 self.triggered = False
             time.sleep(0.02)
 
