@@ -1,5 +1,7 @@
 package picview;
 
+import sync.SyncThread;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
@@ -20,6 +22,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     private static final String MENU_DIASHOW = "Diashow";
     private static final String FILE_MARKED = "markedList.j";
     private boolean loading;
+    private SyncThread syncThread;
     private List<PicPane> picBuffer;
     private List<String> markedList;
     private File defaultDir;
@@ -66,6 +69,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         defaultDir = new File(System.getProperty("user.dir"));
         picBuffer = new ArrayList<>();
         markedList = loadMarked();
+        syncThread = new SyncThread();
 
         // Init UI objects
         bigView = new JPanel();
@@ -404,6 +408,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     @Override
     public void windowClosed(WindowEvent windowEvent) {
         System.out.println("Bye \uD83D\uDE4B \uD83D\uDE09");
+        syncThread.quit();
         writeMarked();
         System.exit(0);
     }
