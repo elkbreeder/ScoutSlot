@@ -1,7 +1,7 @@
 import pygame
 
-card_size = (200, 300)
-height_interface_bottom = 100
+card_size = (300, 300)
+height_interface_bottom = 50
 height_interface_top = 100
 width_interface_left = 50
 width_interface_right = 50

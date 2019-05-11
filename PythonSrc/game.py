@@ -6,7 +6,7 @@ import random
 import os
 
 try:
-    import gui, model
+    import gui, model, picture
 except:
     from PythonSrc import gui, camera, model
 
@@ -16,8 +16,8 @@ roll_speed_range = (50, 100)
 roll_range = (50, 100)
 fps = 25
 photo_seconds = 5
-
-
+#1024x 768
+#300
 class Game:
     def __init__(self):
         pygame.init()
@@ -27,6 +27,7 @@ class Game:
         '''GameInit'''
         frame_size = (gui.card_size[0] * 3 + gui.width_interface_left + gui.width_interface_right,
                       gui.card_size[1] * 2 + gui.height_interface_bottom + gui.height_interface_top)  # init frame
+        print(frame_size)
         self.screen = pygame.display.set_mode(frame_size)  # display frame ,pygame.FULLSCREEN
         self.clock = pygame.time.Clock()
         self.sound_no_money = pygame.mixer.Sound("../sounds/error0.wav")

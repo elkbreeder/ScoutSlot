@@ -12,10 +12,10 @@ class Reel:
         self.screen = screen
         reel = []
         for i in range(0, 3):
-            curr = pygame.image.load("../cards200x300/pic" + str(i+1) + ".png")
+            curr = pygame.image.load("../cards300x300/pic" + str(i+1) + ".png")
             curr_rect = curr.get_rect()
             if curr_rect.size != gui.card_size:
-                raise Exception("wrong image format", "../cards200x300/pic" + str(i+1) + ".png has the wrong format")
+                raise Exception("wrong image format", "../cards300x300/pic" + str(i+1) + ".png has the wrong format")
             curr_rect = curr_rect.move((x, -curr_rect.height * i))
             card_id = str(i + 1)
             reel.append([curr, curr_rect, card_id])
