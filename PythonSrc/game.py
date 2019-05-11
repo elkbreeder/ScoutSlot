@@ -50,7 +50,7 @@ class Game:
         self.coins = 0
 
         self.photo_seconds = 0
-        # self.camera = camera.Camera()
+        self.camera = cam.Camera()
         if os.uname().nodename == 'raspberrypi': #first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
             print('CoinThread started')
             from coins import CoinThread
@@ -107,6 +107,11 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:  # Start Roll
                     self.start_roll()
+                elif event.key == pygame.K_ESCAPE:
+                    if hasattr(self, 'coinThread'):
+                        self.coinThread.quit()
+                        self.triggerThread.quit()
+                    sys.exit()
                 elif event.key == pygame.K_F3:  # Show FPS
                     self.interface.show_fps_clicked()
                 elif event.key == pygame.K_F4:  # Show Winner Window

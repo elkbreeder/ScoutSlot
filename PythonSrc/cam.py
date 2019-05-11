@@ -5,13 +5,13 @@ import os
 
 class Camera:
     def __init__(self):
-        if os.name is 'nt':  #
+        if os.name == 'nt':  #
             print("Windows doesn't support camera functionality")
             return
         #self.cam = pygame.camera.Camera("/dev/video0", (640, 480))
 
     def capture(self, path):
-        if os.name is 'nt':  #
+        if os.name == 'nt':  #
             print("Windows doesn't support camera functionality")
             return
         pygame.camera.init()
@@ -24,8 +24,10 @@ class Camera:
 
     def capture_next_winner(self):
         print("NOT IMPLEMENTED")
+        self.capture("~/images/")
 
 
 if __name__ == '__main__':
     camera = Camera()
     camera.capture('test.jpg')
+
