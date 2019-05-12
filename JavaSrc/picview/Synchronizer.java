@@ -1,4 +1,4 @@
-package sync;
+package picview;
 
 import com.jcraft.jsch.*;
 
@@ -8,21 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class SyncThread extends Thread {
+public class Synchronizer {
 
     private static final String REMOTE_USER = "jzbor";
     private static final String LOCAL_USER = "jzbor";
     private static final String REMOTE_HOST = "localhost";
     private static final String FILE_KNOWN_HOSTS = "/home/" + LOCAL_USER + "/.ssh/known_hosts";
-    private static final String LOCAL_DIR = "./test/out/";
-    private static final String REMOTE_DIR = "/home/jzbor/Pictures/Silvester/MEDIUM/";
-    private static final int SLEEP = 2000;
-    private boolean end;
+    public static final String LOCAL_DIR = "./test/out/";
+    private static final String REMOTE_DIR = "/home/jzbor/Pictures/Silvester/LARGE/";
+    private boolean initialized;
+    private boolean initFailed;
     private Session session;
     private ChannelSftp sftpChannel;
 
-    public SyncThread() {
-        start();
+    public Synchronizer() {
+    }
+
+    public void init() {
+        new LoginThread();
     }
 
     private void login() throws JSchException {
@@ -39,48 +42,42 @@ public class SyncThread extends Thread {
         sftpChannel.connect();
     }
 
-    @Override
-    public void run() {
-        super.run();
-
-        try {
-            login();
-        } catch (JSchException e) {
-            e.printStackTrace();
+    public void sync() throws SftpException {
+        if (initFailed) {
+            System.out.println("Unable to synchronize with remote (" + REMOTE_USER + "@" + REMOTE_HOST + ")");
             return;
         }
-
-        while (!end) {
-            try {
-                Vector<ChannelSftp.LsEntry> files = sftpChannel.ls(REMOTE_DIR);
-                List<String> fileNameList = new ArrayList<>();
-                for (ChannelSftp.LsEntry entry :
-                        files) {
-                    if (!entry.getAttrs().isDir()) {
-                        fileNameList.add(entry.getFilename());
-                    }
-                }
-                String[] filenames = fileNameList.toArray(new String[0]);
-                for (int i = 0; i < filenames.length; i++) {
-                    if (!(new File(LOCAL_DIR + filenames[i]).exists())) {
-                        System.out.println("Copying rem:" + REMOTE_DIR + filenames[i] + " to loc:" + LOCAL_DIR + filenames[i]);
-                        sftpChannel.get(REMOTE_DIR + filenames[i], LOCAL_DIR + filenames[i]);
-                    }
-                }
-            } catch (SftpException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                Thread.sleep(SLEEP);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        System.out.println("Synchronizing with remote (" + REMOTE_USER + "@" + REMOTE_HOST + ")");
+        Vector<ChannelSftp.LsEntry> files = sftpChannel.ls(REMOTE_DIR);
+        List<String> fileNameList = new ArrayList<>();
+        for (ChannelSftp.LsEntry entry :
+                files) {
+            if (!entry.getAttrs().isDir()) {
+                fileNameList.add(entry.getFilename());
             }
         }
+        String[] filenames = fileNameList.toArray(new String[0]);
+        File localDir = new File(LOCAL_DIR);
+        for (int i = 0; i < filenames.length; i++) {
+            if (!(new File(localDir, filenames[i]).exists())) {
+                if (!localDir.isDirectory()) {
+                    localDir.mkdirs();
+                    System.out.println("\t\tCreating path: " + localDir.getAbsolutePath());
+                }
+                System.out.println("\t\tCopying rem:" + REMOTE_DIR + filenames[i] + " to loc:" + LOCAL_DIR + filenames[i]);
+
+                sftpChannel.get(REMOTE_DIR + filenames[i], LOCAL_DIR + filenames[i]);
+            }
+        }
+        System.out.println("\tDone");
     }
 
-    public void quit() {
-        end = true;
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public boolean isInitFailed() {
+        return initFailed;
     }
 
     private class MyUserInfo implements UserInfo {
@@ -102,7 +99,7 @@ public class SyncThread extends Thread {
         @Override
         public boolean promptPassword(String s) {
             JPanel panel = new JPanel();
-            JLabel label = new JLabel("Enter a password: ");
+            JLabel label = new JLabel("Passwort für " + REMOTE_USER + "@" + REMOTE_HOST + ": ");
             JPasswordField pass = new JPasswordField(10);
             panel.add(label);
             panel.add(pass);
@@ -121,7 +118,7 @@ public class SyncThread extends Thread {
         @Override
         public boolean promptPassphrase(String s) {
             JPanel panel = new JPanel();
-            JLabel label = new JLabel("Enter a passphrase (SSH-key): ");
+            JLabel label = new JLabel("Passphrase (SSH-key): ");
             JPasswordField pass = new JPasswordField(10);
             panel.add(label);
             panel.add(pass);
@@ -153,6 +150,24 @@ public class SyncThread extends Thread {
                     s,
                     TITLE,
                     JOptionPane.PLAIN_MESSAGE);
+        }
+    }
+
+    private class LoginThread extends Thread {
+        public LoginThread() {
+            start();
+        }
+
+        @Override
+        public void run() {
+            try {
+                login();
+                initialized = true;
+                initFailed = false;
+            } catch (JSchException e) {
+                e.printStackTrace();
+                initFailed = true;
+            }
         }
     }
 }
