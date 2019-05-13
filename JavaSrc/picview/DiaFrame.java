@@ -26,8 +26,18 @@ public class DiaFrame extends JFrame implements WindowListener {
     }
 
     private File[] loadFiles() {
-        return directory.listFiles(
+        File[] files = directory.listFiles(
                 MyFilenameFilter.imageFilter());
+        if (files == null || files.length == 0) {
+            System.err.println("Diashow: No Pictures found");
+            dispose();
+            JOptionPane.showMessageDialog(null,
+                    "Es wurden keine Biler gefunden",
+                    "Diashow",
+                    JOptionPane.ERROR_MESSAGE);
+            end = true;
+        }
+        return files;
     }
 
     @Override
@@ -77,6 +87,8 @@ public class DiaFrame extends JFrame implements WindowListener {
 
             while (!end) {
                 File[] files = loadFiles();
+                if (files == null)
+                    return;
                 for (int i = 0; i < files.length; i++) {
                     if (end) {
                         break;

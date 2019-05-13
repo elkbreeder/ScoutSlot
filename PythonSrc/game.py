@@ -15,22 +15,21 @@ PHOTOCOUNTER = pygame.USEREVENT + 1
 roll_speed_range = (50, 100)
 roll_range = (50, 100)
 fps = 25
-photo_seconds = 5
+photo_seconds = 3
+#1024x 768
+#300
 
-
-# 1024x 768
-# 300
 class Game:
-    def __init__(self):
+    def __init__(self, isdebug):
         pygame.init()
         pygame.font.init()
         pygame.mixer.init()
-
+        self.isdebug = isdebug
         '''GameInit'''
         frame_size = (gui.card_size[0] * 3 + gui.width_interface_left + gui.width_interface_right,
                       gui.card_size[1] * 2 + gui.height_interface_bottom + gui.height_interface_top)  # init frame
         print(frame_size)
-        if os.uname().nodename == 'raspberrypi':
+        if os.uname().nodename == 'raspberrypi' and not self.isdebug:
             self.screen = pygame.display.set_mode(frame_size, pygame.FULLSCREEN)  # display frame ,pygame.FULLSCREEN
         else:
             self.screen = pygame.display.set_mode(frame_size)  # display frame ,pygame.FULLSCREEN
@@ -56,7 +55,7 @@ class Game:
 
         self.photo_seconds = 0
         self.camera = cam.Camera()
-        if os.uname().nodename == 'raspberrypi':  # first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
+        if os.uname().nodename == 'raspberrypi': #first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
             print('CoinThread started')
             from coins import CoinThread
             from trigger import TriggerThread
@@ -107,18 +106,12 @@ class Game:
     def event_manager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                if hasattr(self, 'coinThread'):
-                    self.coinThread.quit()
-                    self.triggerThread.quit()
-                sys.exit()
+                self.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:  # Start Roll
                     self.start_roll()
                 elif event.key == pygame.K_ESCAPE:
-                    if hasattr(self, 'coinThread'):
-                        self.coinThread.quit()
-                        self.triggerThread.quit()
-                    sys.exit()
+                    self.exit()
                 elif event.key == pygame.K_F3:  # Show FPS
                     self.interface.show_fps_clicked()
                 elif event.key == pygame.K_F4:  # Show Winner Window
@@ -148,7 +141,12 @@ class Game:
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
-
+    def exit(self):
+        if hasattr(self, 'coinThread'):
+            self.coinThread.quit()
+            self.triggerThread.quit()
+            self.camera.exit()
+        sys.exit()
     def coin_add(self, coins):
         self.coinLock.acquire()
         self.coins += coins
@@ -157,5 +155,6 @@ class Game:
 
 
 if __name__ == '__main__':
-    g = Game()
+    print()
+    g = Game(sys.argv.__contains__("--debug"))
     g.game_loop()  # start game loop

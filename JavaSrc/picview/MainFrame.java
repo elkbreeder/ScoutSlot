@@ -1,5 +1,7 @@
 package picview;
 
+import com.jcraft.jsch.SftpException;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
@@ -18,8 +20,12 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     private static final String CONFIRM_UNMARK = "Markierung entfernen?";
     private static final String MENU_RELOAD = "Neu laden";
     private static final String MENU_DIASHOW = "Diashow";
+    private static final String MENU_LOGIN = "SSH login";
     private static final String FILE_MARKED = "markedList.j";
+    private static final int WAIT_SLEEP = 200;
     private boolean loading;
+    private Synchronizer syncThread;
+    private UpdateThread updateThread;
     private List<PicPane> picBuffer;
     private List<String> markedList;
     private File defaultDir;
@@ -29,21 +35,11 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     private JPopupMenu popupMenu;
     private JMenuItem reloadMenuItem;
     private JMenuItem diashowMenuItem;
+    private JMenuItem loginMenuItem;
 
     public MainFrame() {
         super(TITEL);
         init();
-
-        new LoadingThread();
-    }
-
-    public MainFrame(String path) {
-        super(TITEL);
-        init();
-
-        this.defaultDir = new File(path);
-
-        new LoadingThread();
     }
 
     /**
@@ -54,8 +50,6 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     public static void main(String[] args) {
         if (args.length == 0)
             new MainFrame();
-        else
-            new MainFrame(args[0]);
     }
 
     /**
@@ -63,9 +57,12 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
      */
     private void init() {
         // Set/Init default attributes
-        defaultDir = new File(System.getProperty("user.dir"));
+        defaultDir = new File(Synchronizer.LOCAL_DIR);
         picBuffer = new ArrayList<>();
         markedList = loadMarked();
+        syncThread = new Synchronizer();
+        syncThread.init();
+        updateThread = new UpdateThread(this, syncThread);
 
         // Init UI objects
         bigView = new JPanel();
@@ -98,11 +95,15 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         popupMenu = new JPopupMenu();
         reloadMenuItem = new JMenuItem(MENU_RELOAD);
         diashowMenuItem = new JMenuItem(MENU_DIASHOW);
+        loginMenuItem = new JMenuItem(MENU_LOGIN);
         reloadMenuItem.addActionListener(this);
         diashowMenuItem.addActionListener(this);
+        loginMenuItem.addActionListener(this);
         popupMenu.add(reloadMenuItem);
         popupMenu.add(diashowMenuItem);
+        popupMenu.add(loginMenuItem);
         addMouseListener(new PopupListener(popupMenu));
+        bigView.addMouseListener(new PopupListener(popupMenu));
     }
 
     /**
@@ -148,14 +149,16 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         // Check if dir exists
         if (!defaultDir.isDirectory()) {
             System.err.println("Default dir (" + defaultDir.getAbsolutePath() + ") is not a directory!");
+            loading = false;
             return;
         }
         // Load all files and according to image filename filter
         File[] imgFiles = defaultDir.listFiles(
                 MyFilenameFilter.imageFilter());
         // Exception handling (wtf can listFiles() return null?)
-        if (imgFiles == null) {
+        if (imgFiles == null || imgFiles.length == 0) {
             System.err.println("No image files found");
+            loading = false;
             return;
         }
         // Sort by filename to get chronologic order
@@ -191,6 +194,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         // Check if dir exists
         if (!defaultDir.isDirectory()) {
             System.err.println("Default dir (" + defaultDir.getAbsolutePath() + ") is not a directory!");
+            loading = false;
             return;
         }
         // Load all files and according to image filename filter
@@ -199,6 +203,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         // Exception handling (wtf can listFiles() return null?)
         if (imgFiles == null) {
             System.err.println("No image files found");
+            loading = false;
             return;
         }
         // Sort by filename to get chronologic order
@@ -213,12 +218,6 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         }
 
         loadBuffer();
-
-        try {
-            addBigView(imgFiles[imgFiles.length - 1]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         // Update ui
         ((JPanel) getContentPane()).updateUI();
@@ -285,9 +284,34 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         int height = getHeight() - scrollView.getHeight();
         getContentPane().remove(bigView);
         bigView = new PicPane(file, height);
+        ((PicPane) bigView).setMarked(markedList.contains(file.getName()));
         getContentPane().add(bigView, BorderLayout.CENTER);
         getContentPane().revalidate();
     }
+
+    public void updatePics() {
+        while (loading) {
+            try {
+                Thread.sleep(WAIT_SLEEP);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        if (scrollBox.getComponents().length == 0) {
+            System.out.println("Loading images into UI... ");
+            loadImages();
+            System.out.println("\tDone");
+        } else {
+            System.out.println("Reloading images into UI... ");
+            reloadImages();
+            System.out.println("\tDone");
+        }
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
+
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
@@ -295,7 +319,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
 
         if (src instanceof PicPane) {
             PicPane panel = (PicPane) src;
-            if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
+            if (SwingUtilities.isRightMouseButton(mouseEvent)) {
                 // Marks or unmarks a picture if desired
                 if (!panel.isMarked()) {
                     int response =
@@ -306,6 +330,11 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
                                     JOptionPane.QUESTION_MESSAGE);
                     if (response == JOptionPane.YES_OPTION) {
                         panel.setMarked(true);
+                        if (bigView instanceof PicPane) {
+                            PicPane bigPane = (PicPane) bigView;
+                            if (bigPane.getFile().getName().equals(panel.getFile().getName()))
+                                bigPane.setMarked(true);
+                        }
                         markedList.add(panel.getFile().getName());
                     }
                 } else {
@@ -317,10 +346,15 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
                                     JOptionPane.QUESTION_MESSAGE);
                     if (response == JOptionPane.YES_OPTION) {
                         panel.setMarked(false);
+                        if (bigView instanceof PicPane) {
+                            PicPane bigPane = (PicPane) bigView;
+                            if (bigPane.getFile().getName().equals(panel.getFile().getName()))
+                                bigPane.setMarked(false);
+                        }
                         markedList.remove(panel.getFile().getName());
                     }
                 }
-            } else if (SwingUtilities.isMiddleMouseButton(mouseEvent)) {
+            } else if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
                 // Loads a picture into the big center box
                 try {
                     addBigView(panel.getFile());
@@ -361,6 +395,8 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
             new LoadingThread();
         } else if (src == diashowMenuItem) {
             new DiaFrame(defaultDir);
+        } else if (src == loginMenuItem) {
+            syncThread.init();
         }
     }
 
@@ -429,25 +465,22 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     }
 
     private class LoadingThread extends Thread {
+
         private LoadingThread() {
             start();
         }
 
         @Override
         public void run() {
-            super.run();
-            while (loading) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+            try {
+                if (syncThread.isInitialized()) {
+                    syncThread.sync();
                 }
+            } catch (SftpException e) {
+                e.printStackTrace();
             }
-            if (scrollBox.getComponents().length == 0) {
-                loadImages();
-            } else {
-                reloadImages();
-            }
+            updatePics();
         }
     }
 }
