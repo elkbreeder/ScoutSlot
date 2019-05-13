@@ -11,13 +11,15 @@ except:
     from PythonSrc import gui, cam, model
 
 NO_RESULT = -1
-PHOTOCOUNTER = pygame.USEREVENT +1
+PHOTOCOUNTER = pygame.USEREVENT + 1
 roll_speed_range = (50, 100)
 roll_range = (50, 100)
 fps = 25
 photo_seconds = 5
-#1024x 768
-#300
+
+
+# 1024x 768
+# 300
 class Game:
     def __init__(self):
         pygame.init()
@@ -54,7 +56,7 @@ class Game:
 
         self.photo_seconds = 0
         self.camera = cam.Camera()
-        if os.uname().nodename == 'raspberrypi': #first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
+        if os.uname().nodename == 'raspberrypi':  # first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
             print('CoinThread started')
             from coins import CoinThread
             from trigger import TriggerThread
@@ -85,12 +87,14 @@ class Game:
                    self.result):  # if all reels are stopped and show the same
                 self.win()
             self.clock.tick(fps)
+
     def win(self):
         self.sound_win.play()  # player won
         self.photo_seconds = photo_seconds
         pygame.time.set_timer(PHOTOCOUNTER, 1000)
         self.interface.show_winner_window()
         self.result[:] = map(lambda _: NO_RESULT, self.result)
+
     def draw(self):
         self.screen.fill((0, 0, 0))  # fill black
         for i in range(0, len(self.reel)):
@@ -124,12 +128,11 @@ class Game:
                 elif event.key == pygame.K_ESCAPE:
                     sys.exit()
             if event.type == PHOTOCOUNTER:
-                if self.photo_seconds == 1:
+                if self.photo_seconds == 0:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
                     self.camera.capture_next_winner()
+                    self.interface.hide_winner_window()
                 self.photo_seconds -= 1
-
-
 
     def start_roll(self):
         if all(i == 0 for i in self.roll) and self.photo_seconds == 0:  # if no reel runs
