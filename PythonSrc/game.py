@@ -14,7 +14,7 @@ NO_RESULT = -1
 PHOTOCOUNTER = pygame.USEREVENT + 1
 roll_speed_range = (50, 100)
 roll_range = (50, 100)
-fps = 1000
+fps = 24
 photo_seconds = 2
 ROLL_COST = 2
 
