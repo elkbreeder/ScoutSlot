@@ -15,7 +15,7 @@ PHOTOCOUNTER = pygame.USEREVENT + 1
 roll_speed_range = (50, 100)
 roll_range = (50, 100)
 fps = 24
-photo_seconds = 2
+photo_seconds = 3
 ROLL_COST = 2
 
 
@@ -128,7 +128,8 @@ class Game:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
                     self.camera.capture_next_winner()
                     self.interface.hide_winner_window()
-                self.photo_seconds -= 1
+                else:
+                    self.photo_seconds -= 1
 
     def start_roll(self):
         if all(i == 0 for i in self.roll) and self.photo_seconds <= 0:  # if no reel runs
