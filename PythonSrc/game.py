@@ -1,9 +1,9 @@
+import os
+import random
 import sys
 from threading import Lock
 
 import pygame
-import random
-import os
 
 try:
     import gui, model, cam
@@ -16,8 +16,11 @@ roll_speed_range = (50, 100)
 roll_range = (50, 100)
 fps = 25
 photo_seconds = 3
-#1024x 768
-#300
+ROLL_COST = 2
+
+
+# 1024x 768
+# 300
 
 class Game:
     def __init__(self, isdebug):
@@ -55,7 +58,7 @@ class Game:
 
         self.photo_seconds = 0
         self.camera = cam.Camera()
-        if os.uname().nodename == 'raspberrypi': #first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
+        if os.uname().nodename == 'raspberrypi':  # first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
             print('CoinThread started')
             from coins import CoinThread
             from trigger import TriggerThread
@@ -132,21 +135,23 @@ class Game:
             self.interface.hide_winner_window()
             self.sound_chatter.play(-1)  # start rolling
             self.current_extra_rolls = 0
-            if self.coins == 0:
+            if self.coins < ROLL_COST:
                 self.sound_no_money.play(maxtime=400)
                 return
-            self.coin_add(-2)
+            self.coin_add(-ROLL_COST)
             self.result[:] = map(lambda _: NO_RESULT, self.result)
             self.roll_speed[:] = map(
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
+
     def exit(self):
         if hasattr(self, 'coinThread'):
             self.coinThread.quit()
             self.triggerThread.quit()
             self.camera.exit()
         sys.exit()
+
     def coin_add(self, coins):
         self.coinLock.acquire()
         self.coins += coins
