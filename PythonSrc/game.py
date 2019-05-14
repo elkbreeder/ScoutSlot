@@ -131,7 +131,7 @@ class Game:
                 self.photo_seconds -= 1
 
     def start_roll(self):
-        if all(i == 0 for i in self.roll) and self.photo_seconds == 0:  # if no reel runs
+        if all(i == 0 for i in self.roll) and self.photo_seconds <= 0:  # if no reel runs
             self.interface.hide_winner_window()
             self.current_extra_rolls = 0
             self.sound_chatter.play(-1)  # start rolling

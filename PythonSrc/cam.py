@@ -1,7 +1,8 @@
-import pygame
-import pygame.camera
 import datetime
 import os
+
+import pygame
+import pygame.camera
 
 
 class Camera:
@@ -20,13 +21,9 @@ class Camera:
 
         img = self.cam.get_image()
         now = datetime.datetime.now()
-        print(1)
         if not os.path.exists(path):
-            print(2)
             os.mkdir(path)
-            print(3)
         pygame.image.save(img, path + now.strftime("%m.%d %H.%M.%S") + ".jpg")
-        print(4)
 
     def capture_next_winner(self):
         try:
