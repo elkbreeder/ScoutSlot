@@ -14,8 +14,8 @@ NO_RESULT = -1
 PHOTOCOUNTER = pygame.USEREVENT + 1
 roll_speed_range = (50, 100)
 roll_range = (50, 100)
-fps = 25
-photo_seconds = 3
+fps = 1000
+photo_seconds = 2
 ROLL_COST = 2
 
 
@@ -33,7 +33,7 @@ class Game:
                       gui.card_size[1] * 2 + gui.height_interface_bottom + gui.height_interface_top)  # init frame
         print(frame_size)
         if os.uname().nodename == 'raspberrypi' and not self.isdebug:
-            self.screen = pygame.display.set_mode(frame_size, pygame.FULLSCREEN)  # display frame ,pygame.FULLSCREEN
+            self.screen = pygame.display.set_mode(frame_size, pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF)  # display frame ,pygame.FULLSCREEN
         else:
             self.screen = pygame.display.set_mode(frame_size)  # display frame ,pygame.FULLSCREEN
         self.clock = pygame.time.Clock()
@@ -104,7 +104,7 @@ class Game:
         pygame.draw.line(self.screen, (255, 255, 255), (0, self.screen.get_height() // 2),
                          (self.screen.get_width(), self.screen.get_height() // 2), 5)
         self.interface.draw()
-        pygame.display.flip()
+        pygame.display.update()
 
     def event_manager(self):
         for event in pygame.event.get():
@@ -120,7 +120,7 @@ class Game:
                 elif event.key == pygame.K_F4:  # Show Winner Window
                     self.win()
                 elif event.key == pygame.K_F5:
-                    self.coin_add(10)
+                    self.coin_add(1)
                 elif event.key == pygame.K_ESCAPE:
                     sys.exit()
             if event.type == PHOTOCOUNTER:
@@ -133,11 +133,12 @@ class Game:
     def start_roll(self):
         if all(i == 0 for i in self.roll) and self.photo_seconds == 0:  # if no reel runs
             self.interface.hide_winner_window()
-            self.sound_chatter.play(-1)  # start rolling
             self.current_extra_rolls = 0
+            self.sound_chatter.play(-1)  # start rolling
             if self.coins < ROLL_COST:
                 self.sound_no_money.play(maxtime=400)
                 return
+
             self.coin_add(-ROLL_COST)
             self.result[:] = map(lambda _: NO_RESULT, self.result)
             self.roll_speed[:] = map(

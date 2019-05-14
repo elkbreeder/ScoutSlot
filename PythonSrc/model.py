@@ -12,13 +12,14 @@ class Reel:
         self.screen = screen
         reel = []
         for i in range(0, 3):
-            curr = pygame.image.load("../cards300x300/pic" + str(i+1) + ".png")
-            curr_rect = curr.get_rect()
+            image_current = pygame.image.load("../cards300x300/pic" + str(i+1) + ".png").convert()
+            curr_rect = image_current.get_rect()
+            print(curr_rect is image_current.get_rect())
             if curr_rect.size != gui.card_size:
                 raise Exception("wrong image format", "../cards300x300/pic" + str(i+1) + ".png has the wrong format")
             curr_rect = curr_rect.move((x, -curr_rect.height * i))
             card_id = str(i + 1)
-            reel.append([curr, curr_rect, card_id])
+            reel.append([image_current, curr_rect, card_id])
         self.reel = reel
         self.move(gui.card_size[1] * 5)
 
@@ -27,10 +28,10 @@ class Reel:
 
     def get_current_rect(self):
         return self.reel[self.reel_position][1]
-
     def draw(self):
         for curr in self.reel:
-            self.screen.blit(curr[0], curr[1])
+            if curr[1].topleft[1] <= self.screen.get_height() and curr[1].bottomleft[1] >= 0:
+                self.screen.blit(curr[0], curr[1])
 
     def move(self, y):
         if y > self.reel[0][1].height:  # if a move is longer than 1 card_size split it up to several moves
