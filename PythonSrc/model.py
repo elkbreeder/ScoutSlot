@@ -14,7 +14,6 @@ class Reel:
         for i in range(0, 3):
             image_current = pygame.image.load("../cards300x300/pic" + str(i+1) + ".png").convert()
             curr_rect = image_current.get_rect()
-            print(curr_rect is image_current.get_rect())
             if curr_rect.size != gui.card_size:
                 raise Exception("wrong image format", "../cards300x300/pic" + str(i+1) + ".png has the wrong format")
             curr_rect = curr_rect.move((x, -curr_rect.height * i))

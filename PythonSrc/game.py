@@ -29,7 +29,7 @@ class Game:
         pygame.mixer.init()
         self.isdebug = isdebug
         '''GameInit'''
-        frame_size = (gui.card_size[0] * 3 + gui.width_interface_left + gui.width_interface_right,
+        frame_size = (gui.card_size[0] * 3,
                       gui.card_size[1] * 2 + gui.height_interface_bottom + gui.height_interface_top)  # init frame
         print(frame_size)
         if os.uname().nodename == 'raspberrypi' and not self.isdebug:
@@ -41,7 +41,7 @@ class Game:
         self.sound_chatter = pygame.mixer.Sound("../sounds/chattering_teeth.wav")
         self.sound_win = pygame.mixer.Sound("../sounds/win.wav")  # init all sound effects
         self.interface = gui.GUI(self)  # init GUI
-        reel_rect = pygame.Rect(gui.width_interface_left, gui.height_interface_top, gui.card_size[0] * 3,
+        reel_rect = pygame.Rect(0, gui.height_interface_top, gui.card_size[0] * 3,
                                 gui.card_size[1] * 2)
         self.reel_screen = self.screen.subsurface(reel_rect)  # define reel subsurface
         self.reel = [model.Reel(self.reel_screen, 0),

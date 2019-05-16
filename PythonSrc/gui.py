@@ -3,8 +3,6 @@ import pygame
 card_size = (300, 300)
 height_interface_bottom = 50
 height_interface_top = 100
-width_interface_left = 50
-width_interface_right = 50
 
 black = (0, 0, 0)
 white = (255, 255, 255)
