@@ -123,9 +123,9 @@ class Game:
         self.screen.fill((0, 0, 0))  # fill black
         for i in range(0, len(self.reel)):
             self.reel[i].draw()
-        pygame.draw.line(self.reel_screen, gui.white, (0, gui.card_size[1] // 2),
+        pygame.draw.line(self.reel_screen, gui.magenta, (0, gui.card_size[1] // 2),
                          (self.reel_screen.get_width(), gui.card_size[1] // 2), 8)
-        pygame.draw.line(self.reel_screen, gui.white, (0, 3 * gui.card_size[1] // 2),
+        pygame.draw.line(self.reel_screen, gui.magenta, (0, 3 * gui.card_size[1] // 2),
                          (self.reel_screen.get_width(), 3 * gui.card_size[1] // 2), 8)
         self.interface.draw()
         pygame.display.update()
@@ -168,6 +168,7 @@ class Game:
 
             self.coin_add(-ROLL_COST)
             self.result = self.calc_result()
+            print(self.result)
             self.roll_speed[:] = map(
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
@@ -176,22 +177,20 @@ class Game:
     def calc_result(self):
         # Gregor move
         # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
-
-        win = random.randint(0, 1) == 0
-
-        if win:
-            winval = random.randint(0, model.Reel.card_count)
-            return [winval, winval, winval]
-        else:
+        def calc_nowin():
             r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))
             if len(r) < 3:
                 print("ERROR FUCK!!!")
             elif r[0] == r[1] == r[2]:
-                i = random.randint(0, 2)
-                r[i] = random.choice(list(range(model.Reel.card_count)).remove(r[0]))
+                return calc_nowin()
             return r
 
-
+        win = (random.randint(0, 2) == 0)
+        if win:
+            winval = random.randint(0, model.Reel.card_count-1)
+            return [winval, winval, winval]
+        else:
+            return calc_nowin()
 
     def exit(self):
         if hasattr(self, 'coinThread'):
