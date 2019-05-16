@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class PicPane extends JComponent {
 
+    private static final int STRING_OFFSET = 5;
     private boolean marked;
     private int height;
     private File file;
@@ -48,6 +49,11 @@ public class PicPane extends JComponent {
         int x = getWidth() / 2 - image.getWidth() / 2;
         int y = getHeight() / 2 - image.getHeight() / 2;
         graphics.drawImage(image, x, y, this);
+        graphics.setColor(Color.green);
+        Font font = new Font("Consolas",Font.BOLD,15);
+        graphics.setFont(font);
+        String string = file.getName().substring(0, file.getName().lastIndexOf("."));
+        graphics.drawString(string, x + STRING_OFFSET, y + font.getSize() + STRING_OFFSET);
     }
 
     /**
