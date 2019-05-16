@@ -13,7 +13,7 @@ except:
 NO_RESULT = -1
 PHOTOCOUNTER = pygame.USEREVENT + 1
 roll_speed_range = (50, 100)
-roll_range = (5, 10)
+roll_range = (5, 8)
 fps = 24
 photo_seconds = 3
 ROLL_COST = 2
@@ -86,7 +86,7 @@ class Game:
                         self.reel[i].move(to_move[i])
                         to_move[i] = 0
                     continue
-                if (self.reel[i].get_current_id() - 1) % model.Reel.card_count == self.result[i] and \
+                if self.reel[i].get_current_id() == self.result[i] and \
                         self.reel[i].get_current_id() != last_img[i]:
                     self.roll[i] -= 1
                     if self.roll[i] == 0:
@@ -109,6 +109,9 @@ class Game:
         if not all((j == self.result[0] and j is not NO_RESULT) for j in
                    self.result):
             return
+        self.win()
+
+    def win(self):
         self.sound_win.play()  # player won
         self.photo_seconds = photo_seconds
         pygame.time.set_timer(PHOTOCOUNTER, 1000)
@@ -120,8 +123,10 @@ class Game:
         self.screen.fill((0, 0, 0))  # fill black
         for i in range(0, len(self.reel)):
             self.reel[i].draw()
-        pygame.draw.line(self.screen, (255, 255, 255), (0, self.screen.get_height() // 2),
-                         (self.screen.get_width(), self.screen.get_height() // 2), 5)
+        pygame.draw.line(self.reel_screen, gui.white, (0, gui.card_size[1] // 2),
+                         (self.reel_screen.get_width(), gui.card_size[1] // 2), 8)
+        pygame.draw.line(self.reel_screen, gui.white, (0, 3 * gui.card_size[1] // 2),
+                         (self.reel_screen.get_width(), 3 * gui.card_size[1] // 2), 8)
         self.interface.draw()
         pygame.display.update()
 
@@ -162,11 +167,31 @@ class Game:
                 return
 
             self.coin_add(-ROLL_COST)
-            self.result[:] = map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
+            self.result = self.calc_result()
             self.roll_speed[:] = map(
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
+
+    def calc_result(self):
+        # Gregor move
+        # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
+
+        win = random.randint(0, 1) == 0
+
+        if win:
+            winval = random.randint(0, model.Reel.card_count)
+            return [winval, winval, winval]
+        else:
+            r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))
+            if len(r) < 3:
+                print("ERROR FUCK!!!")
+            elif r[0] == r[1] == r[2]:
+                i = random.randint(0, 2)
+                r[i] = random.choice(list(range(model.Reel.card_count)).remove(r[0]))
+            return r
+
+
 
     def exit(self):
         if hasattr(self, 'coinThread'):
