@@ -13,7 +13,7 @@ except:
 NO_RESULT = -1
 PHOTOCOUNTER = pygame.USEREVENT + 1
 roll_speed_range = (50, 100)
-roll_range = (5, 10)
+roll_range = (5, 8)
 fps = 24
 photo_seconds = 3
 ROLL_COST = 2
@@ -109,6 +109,9 @@ class Game:
         if not all((j == self.result[0] and j is not NO_RESULT) for j in
                    self.result):
             return
+        self.win()
+
+    def win(self):
         self.sound_win.play()  # player won
         self.photo_seconds = photo_seconds
         pygame.time.set_timer(PHOTOCOUNTER, 1000)
@@ -120,8 +123,10 @@ class Game:
         self.screen.fill((0, 0, 0))  # fill black
         for i in range(0, len(self.reel)):
             self.reel[i].draw()
-        pygame.draw.line(self.screen, (255, 255, 255), (0, self.screen.get_height() // 2),
-                         (self.screen.get_width(), self.screen.get_height() // 2), 5)
+        pygame.draw.line(self.reel_screen, gui.white, (0, gui.card_size[1] // 2),
+                         (self.reel_screen.get_width(), gui.card_size[1] // 2), 8)
+        pygame.draw.line(self.reel_screen, gui.white, (0, 3 * gui.card_size[1] // 2),
+                         (self.reel_screen.get_width(), 3 * gui.card_size[1] // 2), 8)
         self.interface.draw()
         pygame.display.update()
 
