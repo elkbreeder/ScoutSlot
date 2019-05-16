@@ -163,9 +163,9 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         }
         // Sort by filename to get chronologic order
         Arrays.sort(imgFiles);
-        for (File imgFile : imgFiles) {
+        for (int i = imgFiles.length-1; i >= 0; i--) {
             try {
-                PicPane panel = createPicPanel(imgFile, scrollBox.getHeight());
+                PicPane panel = createPicPanel(imgFiles[i], scrollBox.getHeight());
                 addPicPane(panel);
                 ((JPanel) getContentPane()).updateUI();
             } catch (IOException e) {
@@ -208,9 +208,9 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         }
         // Sort by filename to get chronologic order
         Arrays.sort(imgFiles);
-        for (File imgFile : imgFiles) {
+        for (int i = imgFiles.length-1; i >= 0; i--) {
             try {
-                PicPane panel = createPicPanel(imgFile, scrollBox.getHeight());
+                PicPane panel = createPicPanel(imgFiles[i], scrollBox.getHeight());
                 bufferPicPane(panel);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -281,7 +281,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
      * @throws IOException thrown if {@link PicPane#PicPane(File, int)} fails
      */
     private void addBigView(File file) throws IOException {
-        int height = getHeight() - scrollView.getHeight();
+        int height = getContentPane().getHeight() - scrollView.getHeight();
         getContentPane().remove(bigView);
         bigView = new PicPane(file, height);
         ((PicPane) bigView).setMarked(markedList.contains(file.getName()));
@@ -312,7 +312,6 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         return loading;
     }
 
-
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         Object src = mouseEvent.getSource();
@@ -322,6 +321,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
             if (SwingUtilities.isRightMouseButton(mouseEvent)) {
                 // Marks or unmarks a picture if desired
                 if (!panel.isMarked()) {
+                    /*
                     int response =
                             JOptionPane.showConfirmDialog(this,
                                     CONFIRM_MARK,
@@ -337,6 +337,15 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
                         }
                         markedList.add(panel.getFile().getName());
                     }
+                     */
+
+                    panel.setMarked(true);
+                    if (bigView instanceof PicPane) {
+                        PicPane bigPane = (PicPane) bigView;
+                        if (bigPane.getFile().getName().equals(panel.getFile().getName()))
+                            bigPane.setMarked(true);
+                    }
+                    markedList.add(panel.getFile().getName());
                 } else {
                     int response =
                             JOptionPane.showConfirmDialog(this,

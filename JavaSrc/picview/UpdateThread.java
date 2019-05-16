@@ -31,7 +31,6 @@ public class UpdateThread extends Thread {
             } catch (SftpException e) {
                 e.printStackTrace();
             }
-            System.out.println("run");
 
             mainFrame.updatePics();
 

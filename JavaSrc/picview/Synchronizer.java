@@ -10,16 +10,16 @@ import java.util.Vector;
 
 public class Synchronizer {
 
-    private static final String REMOTE_USER = "jzbor";
-    private static final String LOCAL_USER = "jzbor";
-    private static final String REMOTE_HOST = "localhost";
-    private static final String FILE_KNOWN_HOSTS = "/home/" + LOCAL_USER + "/.ssh/known_hosts";
-    public static final String LOCAL_DIR = "./test/out/";
-    private static final String REMOTE_DIR = "/home/jzbor/Pictures/Silvester/LARGE/";
-    private boolean initialized;
-    private boolean initFailed;
-    private Session session;
-    private ChannelSftp sftpChannel;
+    private static final String REMOTE_USER = Vars.getRemoteUser();
+    private static final String LOCAL_USER = Vars.getLocalUser();
+    private static final String REMOTE_HOST = Vars.getRemoteHost();
+    private static final String FILE_KNOWN_HOSTS = Vars.getFileKnownHosts();
+    public static final String LOCAL_DIR = Vars.getLocalDir();
+    public static final String REMOTE_DIR = Vars.getRemoteDir();
+    public boolean initialized;
+    public boolean initFailed;
+    public Session session;
+    public ChannelSftp sftpChannel;
 
     public Synchronizer() {
     }
