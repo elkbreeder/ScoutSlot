@@ -86,7 +86,7 @@ class Game:
                         self.reel[i].move(to_move[i])
                         to_move[i] = 0
                     continue
-                if (self.reel[i].get_current_id() - 1) % model.Reel.card_count == self.result[i] and \
+                if self.reel[i].get_current_id() == self.result[i] and \
                         self.reel[i].get_current_id() != last_img[i]:
                     self.roll[i] -= 1
                     if self.roll[i] == 0:
@@ -167,11 +167,31 @@ class Game:
                 return
 
             self.coin_add(-ROLL_COST)
-            self.result[:] = map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
+            self.result = self.calc_result()
             self.roll_speed[:] = map(
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
+
+    def calc_result(self):
+        # Gregor move
+        # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
+
+        win = random.randint(0, 1) == 0
+
+        if win:
+            winval = random.randint(0, model.Reel.card_count)
+            return [winval, winval, winval]
+        else:
+            r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))
+            if len(r) < 3:
+                print("ERROR FUCK!!!")
+            elif r[0] == r[1] == r[2]:
+                i = random.randint(0, 2)
+                r[i] = random.choice(list(range(model.Reel.card_count)).remove(r[0]))
+            return r
+
+
 
     def exit(self):
         if hasattr(self, 'coinThread'):
