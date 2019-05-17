@@ -150,6 +150,7 @@ class Game:
                 elif event.key == pygame.K_F6:
                     self.reel[0].move(100)
             if event.type == PHOTOCOUNTER:
+                print(self.photo_seconds)
                 if self.photo_seconds == 0:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
                     self.camera.capture_next_winner()

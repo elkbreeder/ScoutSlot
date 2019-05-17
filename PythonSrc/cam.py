@@ -12,19 +12,19 @@ class Camera:
             print("Windows doesn't support camera functionality")
             return
         self.cam = pygame.camera.Camera("/dev/video0", (640, 480))
-        self.cam.start()
 
     def capture(self, path):
         if os.name == 'nt':  #
             print("Windows doesn't support camera functionality")
             return
-
+        self.cam.start()
         img = self.cam.get_image()
         now = datetime.datetime.now()
         if not os.path.exists(path):
             os.mkdir(path)
         pygame.image.save(img, path + now.strftime("%y-%b-%d_%H:%M:%S") + ".jpg")
-
+        self.cam.stop()
+        #print("File: +" str(os.path.isfile(path)))
     def capture_next_winner(self):
         try:
             self.capture("./images/")
@@ -32,12 +32,12 @@ class Camera:
             print(e)
 
     def exit(self):
-        try:
-            self.cam.stop()
-        except Exception as e:
-            print(e)
+        return
+        #try:
+        #except Exception as e:
+        #    print(e)
 
 
 if __name__ == '__main__':
     camera = Camera()
-    camera.capture('test.jpg')
+    camera.capture('../img/')
