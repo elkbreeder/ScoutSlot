@@ -57,6 +57,8 @@ class Game:
         self.coinLock = Lock()
         self.coins = 0
 
+        pygame.mouse.set_visible(False)
+
         self.photo_seconds = 0
         self.camera = cam.Camera()
         if os.uname().nodename == 'raspberrypi':  # first check if the os is windows(windows doesn't provide uname) | os.name is not 'nt' and
