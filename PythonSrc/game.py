@@ -6,9 +6,9 @@ from threading import Lock
 import pygame
 
 try:
-    import gui, model, cam
+    import gui, model, cam, docu
 except:
-    from PythonSrc import gui, cam, model
+    from PythonSrc import gui, cam, model, docu
 
 NO_RESULT = -1
 PHOTOCOUNTER = pygame.USEREVENT + 1
@@ -194,6 +194,7 @@ class Game:
         win = (random.randint(0, 5) == 0)
         if win:
             winval = random.randint(0, model.Reel.card_count - 1)
+            docu.addWin()
             return [winval, winval, winval]
         else:
             return calc_nowin()
@@ -206,6 +207,9 @@ class Game:
         sys.exit()
 
     def coin_add(self, coins):
+        if coins > 0:
+            for i in range(coins):
+                docu.addMoney()
         self.coinLock.acquire()
         self.coins += coins
         self.interface.showed_coins = self.coins
