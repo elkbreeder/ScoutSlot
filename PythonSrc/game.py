@@ -27,6 +27,8 @@ class Game:
         pygame.init()
         pygame.font.init()
         pygame.mixer.init()
+        self.is_running = False
+        self.to_move = [0, 0, 0]
         self.isdebug = isdebug
         '''GameInit'''
         frame_size = (gui.card_size[0] * 3,
@@ -69,47 +71,45 @@ class Game:
         last_img = [self.reel[0].get_current_id(),
                     self.reel[1].get_current_id(),
                     self.reel[2].get_current_id()]
-        to_move = [0, 0, 0]
+
         while 1:  # endless loop
             self.event_manager()  # manage events
-            if all(i == 0 for i in self.roll) and all(i == 0 for i in to_move):  # if all rolls are stopped
+            if all(i == 0 for i in self.roll) and all(i == 0 for i in self.to_move) and self.is_running:  # if all rolls are stopped
                 self.sound_chatter.stop()
-                self.is_win()
+                if all((j == self.result[0] and j is not NO_RESULT) for j in
+                       self.result):
+                    self.win()
+                self.is_running = False
             for i in range(0, len(self.reel)):  # loop over all reels
-                if self.roll[i] <= 0 and to_move[i] == 0:  # skip if roll doesn't run
+                if (self.roll[i] <= 0 and self.to_move[i] == 0) or self.result[i] == NO_RESULT:  # skip if roll doesn't run
+                    self.roll[i] = 0
                     continue
-                if to_move[i] > 0:
-                    if to_move[i] / self.roll_speed[i] >= 1.0:
+                if self.to_move[i] > 0:
+                    if self.to_move[i] / self.roll_speed[i] >= 1.0:
                         self.reel[i].move(self.roll_speed[i])
-                        to_move[i] -= self.roll_speed[i]
+                        self.to_move[i] -= self.roll_speed[i]
                     else:
-                        self.reel[i].move(to_move[i])
-                        to_move[i] = 0
+                        self.reel[i].move(self.to_move[i])
+                        self.to_move[i] = 0
                     continue
                 if self.reel[i].get_current_id() == self.result[i] and \
                         self.reel[i].get_current_id() != last_img[i]:
                     self.roll[i] -= 1
                     if self.roll[i] == 0:
-                        to_move[i] = int(0.5 * gui.card_size[1]) + gui.card_size[1] - \
+                        self.to_move[i] = int(0.5 * gui.card_size[1]) + gui.card_size[1] - \
                                      self.reel[i].get_current_rect().bottomleft[1]
-                        if to_move[i] / self.roll_speed[i] >= 1.0:
+                        if self.to_move[i] / self.roll_speed[i] >= 1.0:
                             self.reel[i].move(self.roll_speed[i])
-                            to_move[i] -= self.roll_speed[i]
+                            self.to_move[i] -= self.roll_speed[i]
                         else:
-                            self.reel[i].move(to_move[i])
-                            to_move[i] = 0
+                            self.reel[i].move(self.to_move[i])
+                            self.to_move[i] = 0
                         continue
 
                 last_img[i] = self.reel[i].get_current_id()
                 self.reel[i].move(self.roll_speed[i])  # move roll
             self.draw()
             self.clock.tick(fps)
-
-    def is_win(self):
-        if not all((j == self.result[0] and j is not NO_RESULT) for j in
-                   self.result):
-            return
-        self.win()
 
     def win(self):
         self.sound_win.play()  # player won
@@ -150,6 +150,7 @@ class Game:
                 elif event.key == pygame.K_F6:
                     self.reel[0].move(100)
             if event.type == PHOTOCOUNTER:
+                print(self.photo_seconds)
                 if self.photo_seconds == 0:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
                     self.camera.capture_next_winner()
@@ -158,7 +159,8 @@ class Game:
                     self.photo_seconds -= 1
 
     def start_roll(self):
-        if all(i == 0 for i in self.roll) and self.photo_seconds <= 0:  # if no reel runs
+        if all(i == 0 for i in self.roll) and self.photo_seconds <= 0 and all(i == 0 for i in self.to_move) \
+                and not self.is_running:  # if no reel runs
             self.interface.hide_winner_window()
             self.current_extra_rolls = 0
             self.sound_chatter.play(-1)  # start rolling
@@ -168,30 +170,29 @@ class Game:
 
             self.coin_add(-ROLL_COST)
             self.result = self.calc_result()
+            print(self.result)
             self.roll_speed[:] = map(
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
-
+            self.is_running = True
     def calc_result(self):
         # Gregor move
         # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
-
-        win = random.randint(0, 1) == 0
-
-        if win:
-            winval = random.randint(0, model.Reel.card_count)
-            return [winval, winval, winval]
-        else:
+        def calc_nowin():
             r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))
             if len(r) < 3:
                 print("ERROR FUCK!!!")
             elif r[0] == r[1] == r[2]:
-                i = random.randint(0, 2)
-                r[i] = random.choice(list(range(model.Reel.card_count)).remove(r[0]))
+                return calc_nowin()
             return r
 
-
+        win = (random.randint(0, 1) == 0)
+        if win:
+            winval = random.randint(0, model.Reel.card_count-1)
+            return [winval, winval, winval]
+        else:
+            return calc_nowin()
 
     def exit(self):
         if hasattr(self, 'coinThread'):
