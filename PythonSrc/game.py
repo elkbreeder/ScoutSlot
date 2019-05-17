@@ -18,7 +18,7 @@ roll_range = (5, 8)
 fps = 24
 photo_seconds = 3
 ROLL_COST = 2
-lastfuckupsound = datetime.now()
+lastfuckupsound = datetime.now() - timedelta(seconds=5)
 
 
 # 1024x 768
