@@ -27,6 +27,7 @@ class Game:
         pygame.init()
         pygame.font.init()
         pygame.mixer.init()
+        self.is_running = False
         self.to_move = [0, 0, 0]
         self.isdebug = isdebug
         '''GameInit'''
@@ -73,9 +74,12 @@ class Game:
 
         while 1:  # endless loop
             self.event_manager()  # manage events
-            if all(i == 0 for i in self.roll) and all(i == 0 for i in self.to_move):  # if all rolls are stopped
+            if all(i == 0 for i in self.roll) and all(i == 0 for i in self.to_move) and self.is_running:  # if all rolls are stopped
                 self.sound_chatter.stop()
-                self.is_win()
+                if all((j == self.result[0] and j is not NO_RESULT) for j in
+                       self.result):
+                    self.win()
+                self.is_running = False
             for i in range(0, len(self.reel)):  # loop over all reels
                 if (self.roll[i] <= 0 and self.to_move[i] == 0) or self.result[i] == NO_RESULT:  # skip if roll doesn't run
                     self.roll[i] = 0
@@ -106,12 +110,6 @@ class Game:
                 self.reel[i].move(self.roll_speed[i])  # move roll
             self.draw()
             self.clock.tick(fps)
-
-    def is_win(self):
-        if all((j == self.result[0] and j is not NO_RESULT) for j in
-                   self.result):
-            self.win()
-
 
     def win(self):
         self.sound_win.play()  # player won
@@ -160,7 +158,8 @@ class Game:
                     self.photo_seconds -= 1
 
     def start_roll(self):
-        if all(i == 0 for i in self.roll) and self.photo_seconds <= 0 and all(i == 0 for i in self.to_move):  # if no reel runs
+        if all(i == 0 for i in self.roll) and self.photo_seconds <= 0 and all(i == 0 for i in self.to_move) \
+                and not self.is_running:  # if no reel runs
             self.interface.hide_winner_window()
             self.current_extra_rolls = 0
             self.sound_chatter.play(-1)  # start rolling
@@ -175,7 +174,7 @@ class Game:
                 (lambda _: random.randint(roll_speed_range[0], roll_speed_range[1])),
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
-
+            self.is_running = True
     def calc_result(self):
         # Gregor move
         # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
