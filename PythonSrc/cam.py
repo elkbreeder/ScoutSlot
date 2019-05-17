@@ -11,7 +11,7 @@ class Camera:
         if os.name == 'nt':  #
             print("Windows doesn't support camera functionality")
             return
-        self.cam = pygame.camera.Camera("/dev/video0", (640, 480))
+        self.cam = pygame.camera.Camera(pygame.camera.list_cameras()[0], (640, 480))
 
     def capture(self, path):
         if os.name == 'nt':  #
