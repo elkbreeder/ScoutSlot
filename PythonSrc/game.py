@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+from datetime import datetime, timedelta
 from threading import Lock
 
 import pygame
@@ -17,6 +18,7 @@ roll_range = (5, 8)
 fps = 24
 photo_seconds = 3
 ROLL_COST = 2
+lastfuckupsound = datetime.now()
 
 
 # 1024x 768
@@ -166,7 +168,10 @@ class Game:
                 and not self.is_running:  # if no reel runs
             self.interface.hide_winner_window()
             if self.coins < ROLL_COST:
-                self.sound_no_money.play(maxtime=400)
+                global lastfuckupsound
+                if datetime.now() - lastfuckupsound > timedelta(milliseconds=1000):
+                    self.sound_no_money.play(maxtime=400)
+                    lastfuckupsound = datetime.now()
                 return
             self.sound_chatter.play(-1)  # start rolling
             self.coin_add(-ROLL_COST)
