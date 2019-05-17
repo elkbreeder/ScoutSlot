@@ -55,7 +55,6 @@ class Game:
         self.result = [NO_RESULT, NO_RESULT, NO_RESULT]
         self.extra_rolls = 50
         self.coinLock = Lock()
-        self.current_extra_rolls = 0
         self.coins = 0
 
         self.photo_seconds = 0
@@ -164,12 +163,10 @@ class Game:
         if all(i == 0 for i in self.roll) and self.photo_seconds <= 0 and all(i == 0 for i in self.to_move) \
                 and not self.is_running:  # if no reel runs
             self.interface.hide_winner_window()
-            self.current_extra_rolls = 0
-            self.sound_chatter.play(-1)  # start rolling
             if self.coins < ROLL_COST:
                 self.sound_no_money.play(maxtime=400)
                 return
-
+            self.sound_chatter.play(-1)  # start rolling
             self.coin_add(-ROLL_COST)
             self.result = self.calc_result()
             print(self.result)
