@@ -74,14 +74,16 @@ class Game:
 
         while 1:  # endless loop
             self.event_manager()  # manage events
-            if all(i == 0 for i in self.roll) and all(i == 0 for i in self.to_move) and self.is_running:  # if all rolls are stopped
+            if all(i == 0 for i in self.roll) and all(
+                    i == 0 for i in self.to_move) and self.is_running:  # if all rolls are stopped
                 self.sound_chatter.stop()
                 if all((j == self.result[0] and j is not NO_RESULT) for j in
                        self.result):
                     self.win()
                 self.is_running = False
             for i in range(0, len(self.reel)):  # loop over all reels
-                if (self.roll[i] <= 0 and self.to_move[i] == 0) or self.result[i] == NO_RESULT:  # skip if roll doesn't run
+                if (self.roll[i] <= 0 and self.to_move[i] == 0) or self.result[
+                    i] == NO_RESULT:  # skip if roll doesn't run
                     self.roll[i] = 0
                     continue
                 if self.to_move[i] > 0:
@@ -97,7 +99,7 @@ class Game:
                     self.roll[i] -= 1
                     if self.roll[i] == 0:
                         self.to_move[i] = int(0.5 * gui.card_size[1]) + gui.card_size[1] - \
-                                     self.reel[i].get_current_rect().bottomleft[1]
+                                          self.reel[i].get_current_rect().bottomleft[1]
                         if self.to_move[i] / self.roll_speed[i] >= 1.0:
                             self.reel[i].move(self.roll_speed[i])
                             self.to_move[i] -= self.roll_speed[i]
@@ -176,9 +178,11 @@ class Game:
                 self.roll_speed)
             self.roll[:] = map((lambda _: random.randint(roll_range[0], roll_range[1])), self.roll)
             self.is_running = True
+
     def calc_result(self):
         # Gregor move
         # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
+
         def calc_nowin():
             r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))
             if len(r) < 3:
@@ -187,9 +191,9 @@ class Game:
                 return calc_nowin()
             return r
 
-        win = (random.randint(0, 1) == 0)
+        win = (random.randint(0, 5) == 0)
         if win:
-            winval = random.randint(0, model.Reel.card_count-1)
+            winval = random.randint(0, model.Reel.card_count - 1)
             return [winval, winval, winval]
         else:
             return calc_nowin()
