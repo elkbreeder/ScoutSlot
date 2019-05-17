@@ -76,8 +76,10 @@ class Game:
                 self.sound_chatter.stop()
                 self.is_win()
             for i in range(0, len(self.reel)):  # loop over all reels
-                if self.roll[i] <= 0 and to_move[i] == 0:  # skip if roll doesn't run
+                if (self.roll[i] <= 0 and to_move[i] == 0) or self.result[i] == NO_RESULT:  # skip if roll doesn't run
+                    self.roll[i] = 0
                     continue
+                if
                 if to_move[i] > 0:
                     if to_move[i] / self.roll_speed[i] >= 1.0:
                         self.reel[i].move(self.roll_speed[i])
