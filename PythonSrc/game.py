@@ -123,9 +123,9 @@ class Game:
         self.screen.fill((0, 0, 0))  # fill black
         for i in range(0, len(self.reel)):
             self.reel[i].draw()
-        pygame.draw.line(self.reel_screen, gui.magenta, (0, gui.card_size[1] // 2),
+        pygame.draw.line(self.reel_screen, gui.white, (0, gui.card_size[1] // 2),
                          (self.reel_screen.get_width(), gui.card_size[1] // 2), 8)
-        pygame.draw.line(self.reel_screen, gui.magenta, (0, 3 * gui.card_size[1] // 2),
+        pygame.draw.line(self.reel_screen, gui.white, (0, 3 * gui.card_size[1] // 2),
                          (self.reel_screen.get_width(), 3 * gui.card_size[1] // 2), 8)
         self.interface.draw()
         pygame.display.update()
