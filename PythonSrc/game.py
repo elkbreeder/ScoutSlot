@@ -169,7 +169,7 @@ class Game:
             self.interface.hide_winner_window()
             if self.coins < ROLL_COST:
                 global lastfuckupsound
-                if datetime.now() - lastfuckupsound > timedelta(milliseconds=1000):
+                if datetime.now() - lastfuckupsound > timedelta(milliseconds=2000):
                     self.sound_no_money.play(maxtime=400)
                     lastfuckupsound = datetime.now()
                 return
