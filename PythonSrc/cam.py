@@ -24,6 +24,7 @@ class Camera:
             os.mkdir(path)
         pygame.image.save(img, path + now.strftime("%y-%b-%d_%H:%M:%S") + ".jpg")
         self.cam.stop()
+        print(str(datetime.now()) + ': pic taken')
         #print("File: +" str(os.path.isfile(path)))
 
     def capture_next_winner(self):

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pygame
 
 card_size = (300, 300)
@@ -38,6 +40,7 @@ class GUI:
 
     def hide_winner_window(self):
         self.show_winner = 0
+        print(str(datetime.now()) + ': hide winner')
 
     def draw(self):
         self.interface_bottom.fill(magenta)

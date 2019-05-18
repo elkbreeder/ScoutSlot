@@ -160,6 +160,7 @@ class Game:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
                     self.camera.capture_next_winner()
                     self.interface.hide_winner_window()
+                    print(str(datetime.now()) + ': win (sec = 0)')
                 else:
                     self.photo_seconds -= 1
 
