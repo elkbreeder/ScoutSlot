@@ -156,13 +156,13 @@ class Game:
                     self.reel[0].move(100)
             if event.type == PHOTOCOUNTER:
                 print(self.photo_seconds)
+                if self.photo_seconds == 1:
+                    self.camera.capture_next_winner()
                 if self.photo_seconds == 0:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
-                    self.camera.capture_next_winner()
                     self.interface.hide_winner_window()
                     print(str(datetime.now()) + ': win (sec = 0)')
-                else:
-                    self.photo_seconds -= 1
+                self.photo_seconds -= 1
 
     def start_roll(self):
         if all(i == 0 for i in self.roll) and self.photo_seconds <= 0 and all(i == 0 for i in self.to_move) \
