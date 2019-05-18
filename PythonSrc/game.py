@@ -156,9 +156,9 @@ class Game:
                     self.reel[0].move(100)
             if event.type == PHOTOCOUNTER:
                 print(self.photo_seconds)
-                if self.photo_seconds == 1:
-                    self.camera.capture_next_winner()
                 if self.photo_seconds == 0:
+                    self.camera.capture_next_winner()
+                if self.photo_seconds == -1:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
                     self.interface.hide_winner_window()
                     print(str(datetime.now()) + ': win (sec = 0)')
