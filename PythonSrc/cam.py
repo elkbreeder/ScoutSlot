@@ -19,7 +19,7 @@ class Camera:
             return
         self.cam.start()
         img = self.cam.get_image()
-        now = datetime.datetime.now()
+        now = datetime.now()
         if not os.path.exists(path):
             os.mkdir(path)
         pygame.image.save(img, path + now.strftime("%y-%b-%d_%H:%M:%S") + ".jpg")
