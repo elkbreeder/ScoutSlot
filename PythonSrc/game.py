@@ -57,7 +57,7 @@ class Game:
         self.result = [NO_RESULT, NO_RESULT, NO_RESULT]
         self.extra_rolls = 50
         self.coinLock = Lock()
-        self.coins = 0
+        self.coins = 1000
 
         pygame.mouse.set_visible(False)
 
@@ -187,7 +187,7 @@ class Game:
         # Gregor move
         # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
 
-        WIN_CHANCE = 5  # runs per win
+        WIN_CHANCE = 0  # runs per win
 
         def calc_nowin():
             r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))

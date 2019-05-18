@@ -25,6 +25,7 @@ class Camera:
         pygame.image.save(img, path + now.strftime("%y-%b-%d_%H:%M:%S") + ".jpg")
         self.cam.stop()
         #print("File: +" str(os.path.isfile(path)))
+
     def capture_next_winner(self):
         try:
             self.capture("./images/")
