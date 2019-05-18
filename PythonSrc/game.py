@@ -188,7 +188,7 @@ class Game:
         # Gregor move
         # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
 
-        WIN_CHANCE = 1  # runs per win
+        WIN_CHANCE = 12  # runs per win
 
         def calc_nowin():
             r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))
