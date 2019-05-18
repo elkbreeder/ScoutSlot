@@ -57,7 +57,7 @@ class Game:
         self.result = [NO_RESULT, NO_RESULT, NO_RESULT]
         self.extra_rolls = 50
         self.coinLock = Lock()
-        self.coins = 1000
+        self.coins = 0
 
         pygame.mouse.set_visible(False)
 

@@ -1,6 +1,6 @@
 from PythonSrc.game import Game
 
-runs = 200000
+runs = 100000
 wins = 0
 
 game = Game(False)
