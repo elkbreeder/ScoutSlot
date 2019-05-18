@@ -159,9 +159,11 @@ class Game:
                 if self.photo_seconds == 0:
                     self.camera.capture_next_winner()
                 if self.photo_seconds == -1:
+                    print(str(datetime.now()) + ': win (sec = 0)')
+                if self.photo_seconds == -2:
                     pygame.time.set_timer(PHOTOCOUNTER, 0)
                     self.interface.hide_winner_window()
-                    print(str(datetime.now()) + ': win (sec = 0)')
+
                 self.photo_seconds -= 1
 
     def start_roll(self):
