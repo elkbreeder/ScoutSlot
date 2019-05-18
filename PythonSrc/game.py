@@ -187,6 +187,8 @@ class Game:
         # Gregor move
         # return map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result)
 
+        WIN_CHANCE = 5  # runs per win
+
         def calc_nowin():
             r = list(map(lambda _: random.randint(0, model.Reel.card_count - 1), self.result))
             if len(r) < 3:
@@ -195,7 +197,8 @@ class Game:
                 return calc_nowin()
             return r
 
-        win = (random.randint(0, 5) == 0)
+        random.seed(os.urandom(10))
+        win = (random.randint(0, WIN_CHANCE - 1) == 0)
         if win:
             winval = random.randint(0, model.Reel.card_count - 1)
             docu.addWin()
