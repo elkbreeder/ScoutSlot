@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pygame
 
 card_size = (300, 300)
@@ -38,6 +40,7 @@ class GUI:
 
     def hide_winner_window(self):
         self.show_winner = 0
+        print(str(datetime.now()) + ': hide winner')
 
     def draw(self):
         self.interface_bottom.fill(magenta)
@@ -52,7 +55,7 @@ class GUI:
                 center=[self.interface_top.get_width() // 2,
                         (self.interface_top.get_height() // 2) -5 - 0.5*self.font_arial.get_height()])
             self.game.screen.blit(text_winner, text_winner_rect)  # erste zeile
-            if self.game.photo_seconds == 0:
+            if self.game.photo_seconds < 0:
                 text_winner = self.font_arial.render("Foto wurde gemacht und an die Bar geschickt", True, white)
             else:
                 text_winner = self.font_arial.render("Wir machen ein Foto in "+ str(self.game.photo_seconds)+" Sekunden", True, white)
