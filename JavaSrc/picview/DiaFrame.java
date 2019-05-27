@@ -32,7 +32,7 @@ public class DiaFrame extends JFrame implements WindowListener {
             System.err.println("Diashow: No Pictures found");
             dispose();
             JOptionPane.showMessageDialog(null,
-                    "Es wurden keine Biler gefunden",
+                    "Es wurden keine Bilder gefunden",
                     "Diashow",
                     JOptionPane.ERROR_MESSAGE);
             end = true;
@@ -94,7 +94,7 @@ public class DiaFrame extends JFrame implements WindowListener {
                         break;
                     }
                     try {
-                        PicPane panel = new PicPane(files[i], getHeight());
+                        PicPane panel = new PicPane(files[i], getContentPane().getHeight());
                         getContentPane().removeAll();
                         getContentPane().add(panel);
                         ((JPanel) getContentPane()).updateUI();

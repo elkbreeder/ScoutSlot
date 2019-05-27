@@ -34,6 +34,8 @@ public class UpdateThread extends Thread {
 
             mainFrame.updatePics();
 
+            mainFrame.writeMarked();
+
             try {
                 Thread.sleep(INTERVAL_SLEEP);
             } catch (InterruptedException e) {

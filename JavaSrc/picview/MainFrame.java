@@ -23,6 +23,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     private static final String MENU_LOGIN = "SSH login";
     private static final String FILE_MARKED = "markedList.j";
     private static final int WAIT_SLEEP = 200;
+    private boolean markedListLock;
     private boolean loading;
     private Synchronizer syncThread;
     private UpdateThread updateThread;
@@ -71,6 +72,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollView.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         scrollView.setPreferredSize(new Dimension(1000, 300));
+        scrollView.getHorizontalScrollBar().setUnitIncrement(20);
         createMenu();
 
         // Configure Layout
@@ -130,7 +132,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
     /**
      * Writes the marked filenames to a file as a serialized array
      */
-    private void writeMarked() {
+    public void writeMarked() {
         File markedFile = new File(FILE_MARKED);
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(markedFile));
@@ -271,6 +273,22 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
                 picBuffer) {
             addPicPane(panel);
         }
+
+        while (markedListLock) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (PicPane panel :
+                picBuffer) {
+            if (markedList.contains(panel.getFile().getName()))
+                panel.setMarked(true);
+            else
+                panel.setMarked(false);
+        }
         picBuffer = new ArrayList<>();
     }
 
@@ -319,6 +337,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
         if (src instanceof PicPane) {
             PicPane panel = (PicPane) src;
             if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+                markedListLock = true;
                 // Marks or unmarks a picture if desired
                 if (!panel.isMarked()) {
                     /*
@@ -346,6 +365,7 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
                             bigPane.setMarked(true);
                     }
                     markedList.add(panel.getFile().getName());
+                    System.out.println("Marking " + panel.getFile().getName());
                 } else {
                     int response =
                             JOptionPane.showConfirmDialog(this,
@@ -361,8 +381,10 @@ public class MainFrame extends JFrame implements MouseListener, ActionListener, 
                                 bigPane.setMarked(false);
                         }
                         markedList.remove(panel.getFile().getName());
+                        System.out.println("Unmarking " + panel.getFile().getName());
                     }
                 }
+                markedListLock = false;
             } else if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
                 // Loads a picture into the big center box
                 try {
