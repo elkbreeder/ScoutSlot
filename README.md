@@ -2,8 +2,7 @@
 ScoutSlot is a Slotmachine Game made with Python and PyGame. It is optimized to run on a Raspberry Pi 3.
 It can be used in combination with an coin acceptor connected to GPIO pin 18.
 
-This program is used in combination with a selfmade Slotmachine, which runs a Raspberry Pi 3.
-It can be setup for a party, where a player pays for games, but if he wins he doesn't get money, but a free drink at the bar.
+This program is used in combination with a Selfmade Slotmachine, which runs a Raspberry Pi 3.
 The Slot machine consits of following parts:
 1. Raspberry Pi
 2. Screen
@@ -12,6 +11,7 @@ The Slot machine consits of following parts:
 6. Webcam
 
 ## Example Situation
+It can be setup for a party, where a player pays for games, but if he wins he doesn't get money, but a free drink at the bar.
 + Through inserting money, the player gets credits, which can be used to play
 + The Player pulls the lever to play
 + If all three wheels show the same image the Player won
