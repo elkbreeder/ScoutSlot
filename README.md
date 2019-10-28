@@ -12,12 +12,12 @@ The Slot machine consits of following parts:
 6. Webcam
 
 ## Example Situation
-⋅⋅⋅Through inserting money, the player gets credits, which can be used to play
-...The Player pulls the lever to play
-...If all three wheels show the same image the Player won
-...Then a Picture is taken using the webcam and sent to the reciever program on the same network
-...The bar has a computer up and running the reciever program
-...The Player goes to the Bartender, which see the image of him and give him a free beer
++Through inserting money, the player gets credits, which can be used to play
++The Player pulls the lever to play
++If all three wheels show the same image the Player won
++Then a Picture is taken using the webcam and sent to the reciever program on the same network
++The bar has a computer up and running the reciever program
++The Player goes to the Bartender, which see the image of him and give him a free beer
 
 
 ## Setup
