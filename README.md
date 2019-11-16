@@ -1,27 +1,35 @@
 # ScoutSlot
-ScoutSlot is a Slotmachine Game made with Python and PyGame. It is optimized to run on a Raspberry Pi 3.
-It can be used in combination with an coin acceptor connected to GPIO pin 18.
+ScoutSlot is a slot machine game made with Python and PyGame.
+It is optimized to run on a Raspberry Pi 3.
+A coin acceptor can be connected to GPIO pin 18 to validate cash (coins).
+The game then converts the payment into in-game tokens.
 
-This program is used in combination with a Selfmade Slotmachine, which runs a Raspberry Pi 3.
-The Slot machine consits of following parts:
-1. Raspberry Pi
-2. Screen
-3. Coin Acceptor (A Device which is able to distinguish different Coins. Used in vending machines for example)
-5. Lever with an attached Gyrosensor (The gyro sensor allows the program to detect if the Lever is moved)
-6. Webcam
+## Example Setup
 
-## Example Situation
-It can be setup for a party, where a player pays for games, but if he wins he doesn't get money, but a free drink at the bar.
-+ Through inserting money, the player gets credits, which can be used to play
-+ The Player pulls the lever to play
-+ If all three wheels show the same image the Player won
-+ Then a Picture is taken using the webcam and sent to the reciever program on the same network
-+ The bar has a computer up and running the reciever program
-+ The Player goes to the Bartender, which see the image of him and give him a free beer
+Our slot machine setup consists of the following parts:
+1. Raspberry Pi 3
+2. Screen (4:3)
+3. Coin acceptor (a device which is able to distinguish different kinds of coins; Used in vending machines for example)
+4. Lever with an attached gyro sensor (the gyro sensor allows the program to detect when the lever is pulled)
+5. Webcam (connected to the raspi)
+6. External laptop for later winner-validation
+
+The game can be set up for a party, where a player pays for games, but if he wins he doesn't get money, but a free drink at the bar. The bar can validate the wins by an external laptop.
+1. By inserting money, the player gains credits, which can be used to play
+2. The player pulls the lever to play
+3. If all three wheels show the same image the player won
+4. Then a picture is taken using the webcam and sent to the receiver program on the same network
+5. The player goes to the bartender, who can see the image of him on his laptop and gives him a free beer
+6. Then the barkeeper marks the picture as "done" to prevent people from cheating
 
 
 ## Setup
-1. add a cards300x300 folder with 4 pictures called pic1.png,...,pic4.png with a size of 300x300 each.
-2. install pygame
-3. run game.py with python 3
+1. Add a cards300x300 folder with 4 pictures called pic1.png,...,pic4.png with a size of 300x300 each.
+2. Install `pygame`
+3. run `game.py` with `python3`
+
+## Technical Details
+The code for the slot machine is located in the "PythonSrc" folder whilst the code for the external picture-verification computer is in the "JavaSrc" folder.
+As the name suggests you need python to run the game and java to run the "picview" program.
+The "picview" program uses sftp to retrieve the pictures from the slot machine. You will need to customize some of the variables in [JavaSrc/picview/Vars.java](https://github.com/elkbreeder/ScoutSlot/blob/master/JavaSrc/picview/Vars.java).
 
